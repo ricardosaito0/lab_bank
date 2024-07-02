@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, flash, redirect
 from markupsafe import escape
 from forms import RegistrationForm, LoginForm
 
@@ -24,12 +24,30 @@ def register():
     
     form = RegistrationForm()
     
+    if form.validate_on_submit():
+        
+        flash(f'Conta criada para {form.username.data}', 'success')
+        
+        return redirect(url_for('home'))
+    
     return render_template('register.html', title = 'Registrar', form = form)
 
-@app.route('/login')
+@app.route('/login', methods = ['GET', 'POST'])
 def login():
     
     form = LoginForm()
+    
+    if form.validate_on_submit():
+    
+        if form.email.data == 'admin@usp.br' and form.password.data == 'psswd':
+    
+            flash(f'Login feito com sucesso', 'success')
+            
+            return redirect(url_for('home'))
+    
+        else:
+            
+            flash(f'Login incorreto. Verifique email e senha', 'danger')
     
     return render_template('login.html', title = 'Entrar', form = form)
     
