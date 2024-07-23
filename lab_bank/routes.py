@@ -1,8 +1,8 @@
-from flask import render_template, url_for, flash, redirect
+from flask import render_template, url_for, flash, redirect, request
 from lab_bank import app, db, bcrypt
-from lab_bank.forms import RegistrationForm, LoginForm
+from lab_bank.forms import RegistrationForm, LoginForm, UpdateAccountForm
 from lab_bank.models import User, Post
-from flask_login import login_user, current_user, logout_user
+from flask_login import login_user, current_user, logout_user, login_required
 
 @app.route('/')
 @app.route('/home')
@@ -62,8 +62,9 @@ def login():
         if (user and bcrypt.check_password_hash(user.password, form.password.data)):
 
             login_user(user, remember = form.remember.data)
+            next_page = request.args.get('next')
 
-            return redirect(url_for('home'))
+            return redirect(next_page) if next_page else redirect(url_for('home'))
 
         else:
 
@@ -77,3 +78,12 @@ def logout():
     logout_user()
 
     return redirect(url_for('home'))
+
+@app.route('/account')
+@login_required
+def account():
+
+    form = UpdateAccountForm()
+    profile_picture = url_for('static', filename = 'profile_pictures/' + current_user.profile_picture)
+
+    return render_template('account.html', title='Account', profile_picture = profile_picture, form = form)
