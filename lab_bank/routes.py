@@ -1,3 +1,5 @@
+import os
+import secrets
 from flask import render_template, url_for, flash, redirect, request
 from lab_bank import app, db, bcrypt
 from lab_bank.forms import RegistrationForm, LoginForm, UpdateAccountForm
@@ -68,7 +70,7 @@ def login():
 
         else:
 
-            flash(f'Login incorreto. Verifique email e senha', 'danger')
+            flash(f'Login incorreto, verifique email e senha', 'danger')
 
     return render_template('login.html', title='Entrar', form=form)
 
@@ -79,11 +81,40 @@ def logout():
 
     return redirect(url_for('home'))
 
-@app.route('/account')
+def save_picture(form_picture):
+
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_picture.filename)
+    picture_fn = random_hex + f_ext
+    picture_path = os.path.join(app.root_path, 'static/profile_ pictures', picture_fn)
+    form_picture.save(picture_path)
+
+    return picture_fn
+
+@app.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
 
     form = UpdateAccountForm()
+
+    if form.validate_on_submit():
+
+        if form.picture.data:
+
+            picture_file = save_picture(form.picture.data)
+            current_user.profile_picture = picture_file
+
+        current_user.username = form.username.data
+        current_user.email = form.email.data
+        db.session.commit()
+        flash('Sua conta foi atualizada', 'success')
+        return redirect(url_for('account'))
+
+    elif request.method == 'GET':
+
+        form.username.data = current_user.username
+        form.email.data = current_user.email
+
     profile_picture = url_for('static', filename = 'profile_pictures/' + current_user.profile_picture)
 
     return render_template('account.html', title='Account', profile_picture = profile_picture, form = form)
