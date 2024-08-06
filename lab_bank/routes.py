@@ -1,8 +1,9 @@
 import os
 import secrets
-from flask import render_template, url_for, flash, redirect, request
+from PIL import Image
+from flask import render_template, url_for, flash, redirect, request, abort
 from lab_bank import app, db, bcrypt
-from lab_bank.forms import RegistrationForm, LoginForm, UpdateAccountForm
+from lab_bank.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
 from lab_bank.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -10,7 +11,8 @@ from flask_login import login_user, current_user, logout_user, login_required
 @app.route('/home')
 def home():
 
-    return render_template('home.html', title='Home')  # mágica???
+    posts = Post.query.all()
+    return render_template('home.html', title = 'Página Inicial', posts = posts)  # mágica???
 
 
 @app.route('/about')
@@ -86,8 +88,12 @@ def save_picture(form_picture):
     random_hex = secrets.token_hex(8)
     _, f_ext = os.path.splitext(form_picture.filename)
     picture_fn = random_hex + f_ext
-    picture_path = os.path.join(app.root_path, 'static/profile_ pictures', picture_fn)
-    form_picture.save(picture_path)
+    picture_path = os.path.join(app.root_path, 'static', 'profile_pictures', picture_fn)
+    
+    output_size = (125, 125)
+    i = Image.open(form_picture)
+    i.thumbnail(output_size)
+    i.save(picture_path)
 
     return picture_fn
 
@@ -118,3 +124,41 @@ def account():
     profile_picture = url_for('static', filename = 'profile_pictures/' + current_user.profile_picture)
 
     return render_template('account.html', title='Account', profile_picture = profile_picture, form = form)
+    
+@app.route('/post/new', methods=['GET', 'POST'])
+@login_required
+def new_post():
+     
+    form = PostForm()
+    
+    if form.validate_on_submit():
+        
+        post = Post(title = form.title.data, content = form.content.data, author = current_user)
+        db.session.add(post)
+        db.session.commit()
+        flash('Atualização postada', 'success')
+        
+        return redirect(url_for('home'))
+     
+    return render_template('create_post.html', title='Atualização', form = form)
+    
+@app.route('/post/<int:post_id>/')
+def post(post_id):
+    
+    post = Post.query.get_or_404(post_id)
+    
+    return render_template('post.html', title = post.title, post = post)
+    
+@app.route('/post/<int:post_id>/update/')
+@login_required
+def update_post(post_id):
+    
+    post = Post.query.get_or_404(post_id)
+    
+    if post.author != current_user:
+        
+        abort(403)
+        
+    form = PostForm()
+    
+    return render_template('create_post.html', title='Editar atualização', form = form)
