@@ -1,17 +1,14 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-	<div class = 'content-section'>
-	
-		<form method = 'POST' action = ''>
+	<div class='content-section'>
+	<form method='POST' action=''>
 		
 			{{ form.hidden_tag() }}
 		
-			<fieldset class = 'form-group'>
-			
-				<legend class = 'border-bottom mb-4'> Entrar </legend>
-		
-				<div class 'form-group'>
+			<fieldset class='form-group'>
+			<legend class='border-bottom mb-4'> Entrar </legend>
+			<div class'form-group'>
 				
 					{{ form.email.label(class = 'form-control-label') }}
 
@@ -19,7 +16,7 @@
 
 					{{ form.email(class = 'form-control form-control-lg is-invalid') }}
 
-					<div class = "invalid-feedback">
+					<div class="invalid-feedback">
 
 						{% for error in form.email.errors %}
 
@@ -36,8 +33,7 @@
 					{% endif %}
 					
 				</div>
-		
-				<div class 'form-group'>
+			<div class'form-group'>
 				
 					{{ form.password.label(class = 'form-control-label') }}
 
@@ -45,7 +41,7 @@
 
 					{{ form.password(class = 'form-control form-control-lg is-invalid') }}
 
-					<div class = "invalid-feedback">
+					<div class="invalid-feedback">
 
 						{% for error in form.password.errors %}
 
@@ -62,40 +58,28 @@
 					{% endif %}
 					
 				</div>
-
-                <div class="form-check">
+			<div class="form-check">
 
                     {{ form.remember(class = "form-check-input") }}
                     {{ form.remember.label(class = "form-check-label") }}
 
                 </div>
-			
-			</fieldset>
-			
-			<div class = 'form-group'>
+		</fieldset>
+		<div class='form-group'>
 			
 				{{ form.submit(class = 'btn btn-outline-info') }}
 				
 			</div>
-		
-            <small class = "text-muted ml-2">
-
-                <a href = "#"> Esqueceu a senha? </a>
-
-            </small>
-
-		</form>
-		
-	</div>
-
-	<div class = 'border-top pt-3'>
-
-		<small class = 'text-muted'>
-		
-			<a class = 'ml-2' href = '{{ url_for('register') }}'> Registre-se </a>
-			
+		<small class="text-muted ml-2">
+			<a href="#"> Esqueceu a senha? </a>
 		</small>
-		
-	</div>
+	</form>
+</div>
+<div class='border-top pt-3'>
+	<small class='text-muted'>
+		<a class='ml-2' href='{{ url_for('register') }}'> Registre-se
+	</a>
+</small>
+</div>
 
 {% endblock %}
