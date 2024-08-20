@@ -64,6 +64,27 @@ class UpdateAccountForm(FlaskForm):
                 
 class PostForm(FlaskForm):
     
-    title = StringField('Título', validators = [DataRequired()])
-    content = TextAreaField('Conteúdo', validators = [DataRequired()])
+    title = StringField('Título', validators = [])
+    content = TextAreaField('Conteúdo', validators = [])
     submit = SubmitField('Postar')
+    
+class RequestResetForm(FlaskForm):
+    
+    email = StringField('Insira o email', validators = [DataRequired(), Email()])
+    submit = SubmitField('Pedir alteração de senha')
+    
+    def validate_email(self, email):
+
+        email = User.query.filter_by(email = email.data).first()
+
+        if email is None:
+
+            raise ValidationError('Não existem contas com esse email')
+        
+        
+class ResetPasswordForm(FlaskForm):
+    
+    password = PasswordField('Defina uma senha', validators = [DataRequired()])
+    confirm_password = PasswordField('Repita a senha', validators = [DataRequired(), EqualTo('password')])
+    
+    submit = SubmitField('Alterar a senha')

@@ -1,7 +1,10 @@
+import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
+from flask_mail import Mail
+
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'f5f3e9a5875dabc5b96c185ecec1cd374bdfcf67deecef1c9de698799fe0cabce89e19de1159f3a1a73da9f4070f9e1bcfd77c61c876102a6353d268993a8060fc743350c9efebc1e3e66373a1b4f020'
@@ -12,5 +15,11 @@ bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 login_manager.login_message_category = 'info'
+app.config['MAIL_SERVER'] = 'smtp.googlemail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.environ.get('EMAIL_USER')
+app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASS')
+mail = Mail(app)
 
 from lab_bank import routes

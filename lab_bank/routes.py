@@ -2,16 +2,19 @@ import os
 import secrets
 from PIL import Image
 from flask import render_template, url_for, flash, redirect, request, abort
-from lab_bank import app, db, bcrypt
-from lab_bank.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
+from lab_bank import app, db, bcrypt, mail
+from lab_bank.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, RequestResetForm, ResetPasswordForm
 from lab_bank.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
+from markupsafe import escape
+from flask_mail import Message
 
 @app.route('/')
 @app.route('/home')
 def home():
 
-    posts = Post.query.all()
+    page = request.args.get('page', 1, type = int)
+    posts = Post.query.order_by(Post.date_posted.desc()).paginate(page = page, per_page = 7)
     return render_template('home.html', title = 'Página Inicial', posts = posts)  # mágica???
 
 
@@ -19,13 +22,6 @@ def home():
 def about():
 
     return render_template('about.html', title='About')
-
-
-@app.route('/user/<username>')
-def user(username):
-
-    return f'<h1> Usuário: {escape(username)} </h1>'
-
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -192,3 +188,56 @@ def delete_post(post_id):
     flash('Atualização apagada', 'success')
     
     return redirect(url_for('home'))
+    
+@app.route("/user/<string:username>")  
+def user_posts(username):
+
+    page = request.args.get('page', 1, type = int)
+    user = User.query.filter_by(username = username).first_or_404()
+    posts = Post.query.filter_by(author = user).order_by(Post.date_posted.desc()).paginate(page = page, per_page = 7)
+    return render_template('user_posts.html', user = user, title = f'Atualizações de {username}', posts = posts)  # mágica???
+    
+def send_reset_email(user):
+    
+    token = user.get_reset_token()
+    msg = Message('Requisição de alteração de senha', sender = 'reset.psswd0@gmail.com', recipients = [user.email])
+    
+    
+@app.route('/reset_password', methods = ['GET', 'POST'])
+def reset_request():
+    
+    if current_user.is_authenticated:
+        
+        return redirect(url_for('home'))
+        
+    form = RequestResetForm()
+    
+    if form.validate_on_submit():
+        
+        user = User.query.filter_by(email = form.email.data).first()
+        send_reset_email(user)
+        
+        flash('Um email foi enviado para alteração da senha', 'info')
+        
+        return redirect(url_for('login'))
+    
+    return render_template('reset_request.html', title = 'Pedir alteração de senha', form = form)
+    
+@app.route('/reset_password/<token>', methods = ['GET', 'POST'])
+def reset_password():
+    
+    if current_user.is_authenticated:
+        
+        return redirect(url_for('home'))
+        
+    user = User.verify_reset_token(token)
+    
+    if user is None:
+        
+        flash('Token inválido ou expirado', 'warning')
+        
+        return redirect(url_for('reset_request'))
+        
+    form = ResetPasswordForm()
+    
+    return render_template('reset_password.html', title = 'Alterar a senha', form = form)
