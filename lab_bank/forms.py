@@ -75,9 +75,9 @@ class RequestResetForm(FlaskForm):
     
     def validate_email(self, email):
 
-        email = User.query.filter_by(email = email.data).first()
+        user = User.query.filter_by(email = email.data).first()
 
-        if email is None:
+        if user is None:
 
             raise ValidationError('Não existem contas com esse email')
         
