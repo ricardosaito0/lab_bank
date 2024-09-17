@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from flask_login import current_user
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from flask_login import current_user
 from lab_bank.models import User
 
 class RegistrationForm(FlaskForm):
@@ -62,12 +62,7 @@ class UpdateAccountForm(FlaskForm):
             if (email):
                 raise ValidationError('Email já cadastrado')
                 
-class PostForm(FlaskForm):
-    
-    title = StringField('Título', validators = [])
-    content = TextAreaField('Conteúdo', validators = [])
-    submit = SubmitField('Postar')
-    
+                
 class RequestResetForm(FlaskForm):
     
     email = StringField('Insira o email', validators = [DataRequired(), Email()])
