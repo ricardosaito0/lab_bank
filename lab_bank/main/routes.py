@@ -1,5 +1,6 @@
 from flask import render_template, request, Blueprint
 from lab_bank.models import Post
+import pandas as pd
 
 main = Blueprint('main', __name__)
 
@@ -14,5 +15,9 @@ def home():
 
 @main.route('/about')
 def about():
+    
+    test_table = [[78, 21, 41], [12, 34, 12], [12334, 5646, 213213], [4213, 12312, 234]]
+    df = pd.DataFrame(test_table, columns = ['a', 'b', 'c'])
+    test_table_html = df.to_html(classes='table table-striped', index=False)
 
-    return render_template('about.html', title='About')
+    return render_template('about.html', title='About', test_table = test_table_html)

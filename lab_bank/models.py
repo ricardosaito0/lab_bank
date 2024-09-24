@@ -55,3 +55,15 @@ class Post(db.Model):
 
     def __repr__(self):
         return f"Post('{self.title}', '{self.date_posted}')"
+        
+
+class Subject(db.Model):
+    
+    id = db.Column(db.Integer, primary_key=True)    
+    lineage = db.Column(db.Text)
+    ova_or_control = db.Column(db.Text)
+    dead_or_alive = db.Column(db.Text)
+    acepromazine = db.Column(db.Text)
+    weight = db.Column(db.Float)
+    naso_anal_length = db.Column(db.Float)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

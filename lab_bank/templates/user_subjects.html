@@ -1,0 +1,45 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<h1 class="mb-3"> Atualizações de {{ user.username }} ({{ subjects.total }})</h1>
+	
+{% for subject in subjects.items %}
+	
+	<article class="media content-section">
+		<div class="media-body">
+			<div class="article-metadata">
+				<a class="mr-2" href="{{ url_for('users.user_subjects', username=user.username) }}">{{ user.username }}</a>
+				<small class="text-muted">{{ subject.date_created.strftime('%d/%m/%Y, %H:%M:%S') }}</small> <!-- Update this field accordingly if you have a date field -->
+			</div>
+			<h2>
+				<a class="article-title" href="{{ url_for('table.subject_details', subject_id=subject.id) }}">{{ subject.lineage }}</a>
+			</h2>
+			<p class="article-content">
+				<strong>Ova ou Controle:</strong> {{ subject.ova_or_control }}<br>
+				<strong>Estado:</strong> {{ subject.dead_or_alive }}<br>
+				<strong>Acepromazina:</strong> {{ subject.acepromazine }}<br>
+				<strong>Peso:</strong> {{ subject.weight }}<br>
+				<strong>Comprimento Naso-Anal:</strong> {{ subject.naso_anal_length }}<br>
+			</p>
+		</div>
+	</article>
+
+{% endfor %}
+
+{% for page_num in subjects.iter_pages() %}
+	
+	{% if page_num %}
+		
+		{% if subjects.page == page_num %}	
+			<a class="btn btn-info mb-4" href="{{ url_for('users.user_subjects', username=user.username, page=page_num) }}"> {{ page_num }} </a>
+		{% else %}
+			<a class="btn btn-outline-info mb-4" href="{{ url_for('users.user_subjects', username=user.username, page=page_num) }}"> {{ page_num }} </a>
+		{% endif %}
+		
+	{% else %}
+		...
+	{% endif %}
+
+{% endfor %}
+
+{% endblock %}

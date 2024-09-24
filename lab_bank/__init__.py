@@ -25,10 +25,12 @@ def create_app(config_class = Config):
     from lab_bank.users.routes import users
     from lab_bank.posts.routes import posts
     from lab_bank.main.routes import main
+    from lab_bank.table.routes import table
     from lab_bank.errors.handlers import errors
     app.register_blueprint(users)
     app.register_blueprint(posts)
     app.register_blueprint(main)
+    app.register_blueprint(table)
     app.register_blueprint(errors)
     
     return app
