@@ -8,6 +8,7 @@ import pandas as pd
 table = Blueprint('table', __name__)
 
 @table.route('/table/insert_data', methods=['GET', 'POST'])
+@login_required
 def insert_data():
     
     form = InsertDataForm()
@@ -24,6 +25,7 @@ def insert_data():
     return render_template('insert_data.html', title = 'Inserir dados', form = form)
     
 @table.route('/table/display_table')
+@login_required
 def display_table():
     
     subjects = Subject.query.all()
