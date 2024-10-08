@@ -97,6 +97,7 @@ def user_posts(username):
     page = request.args.get('page', 1, type = int)
     user = User.query.filter_by(username = username).first_or_404()
     posts = Post.query.filter_by(author = user).order_by(Post.date_posted.desc()).paginate(page = page, per_page = 7)
+    
     return render_template('user_posts.html', user = user, title = f'Atualizações de {username}', posts = posts)  # mágica???
 
 @users.route('/reset_password', methods = ['GET', 'POST'])
@@ -147,3 +148,8 @@ def reset_password(token):
         return redirect(url_for('users.login')) # or home?
     
     return render_template('reset_password.html', title = 'Alterar a senha', form = form)
+    
+@users.route("/users")
+def user_list():
+    users = User.query.all()  # Fetch all users from the database
+    return render_template('user_list.html', users=users)

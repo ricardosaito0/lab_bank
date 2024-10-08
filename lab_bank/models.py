@@ -18,6 +18,7 @@ class User(db.Model, UserMixin):
     profile_picture = db.Column(db.String(20), nullable=False, default='default.jpg')
     password = db.Column(db.String(60))
     posts = db.relationship('Post', backref='author', lazy=True)
+    subjects = db.relationship('Subject', backref='owner', lazy=True)
 
     def get_reset_token(self, expire_time = 1800):
         
@@ -67,3 +68,4 @@ class Subject(db.Model):
     weight = db.Column(db.Float)
     naso_anal_length = db.Column(db.Float)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    date_created = db.Column(db.DateTime, nullable=False, default=datetime.now(pytz.timezone('America/Sao_Paulo')))

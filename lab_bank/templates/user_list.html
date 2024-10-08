@@ -1,0 +1,25 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<h1>Selecione um Usuário</h1>
+
+<form action="" method="GET" id="userSelectForm">
+    <select name="username" id="usernameSelect">
+        <option value="" disabled selected>Escolha um usuário</option>
+        {% for user in users %}
+            <option value="{{ user.username }}">{{ user.username }}</option>
+        {% endfor %}
+    </select>
+</form>
+
+<script>
+    document.getElementById('usernameSelect').addEventListener('change', function() {
+        var selectedUsername = this.value;
+        if (selectedUsername) {
+            // Redirect to the desired URL
+            window.location.href = "{{ url_for('table.user_subjects', username='') }}" + selectedUsername;
+        }
+    });
+</script>
+
+{% endblock %}

@@ -83,13 +83,11 @@
 												<a href = "{{ url_for('table.insert_data') }}"> Inserção de dados </a>
 												
 												</li>
-												
 												<li class="list-group-item list-group-item-light">
-													{% if current_user.is_authenticated %}
-														<a href="{{ url_for('table.user_subjects') }}"> Dados do usuário </a>
-													{% endif %}
-												</li>
 												
+												<a href = "{{ url_for('users.user_list') }}"> Dados de usuários </a>
+												
+												</li>												
 												<li class="list-group-item list-group-item-light">
 													{% if current_user.is_authenticated %}
 														<a href="{{ url_for('posts.new_post') }}">Nova postagem</a>

@@ -1,28 +1,54 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-<h1 class="mb-3"> Atualizações de {{ user.username }} ({{ subjects.total }})</h1>
+<h1 class="mb-3"> Dados de {{ user.username }} ({{ subjects.total }})</h1>
 	
 {% for subject in subjects.items %}
 	
 	<article class="media content-section">
 		<div class="media-body">
 			<div class="article-metadata">
-				<a class="mr-2" href="{{ url_for('users.user_subjects', username=user.username) }}">{{ user.username }}</a>
-				<small class="text-muted">{{ subject.date_created.strftime('%d/%m/%Y, %H:%M:%S') }}</small> <!-- Update this field accordingly if you have a date field -->
+				<a class="mr-2" href="{{ url_for('table.user_subjects', username=subject.owner.username) }}">{{ user.username }}</a>
+				<small class="text-muted">{{ subject.date_created.strftime('%d/%m/%Y, %H:%M:%S') }}</small>
 			</div>
-			<h2>
-				<a class="article-title" href="{{ url_for('table.subject_details', subject_id=subject.id) }}">{{ subject.lineage }}</a>
-			</h2>
+
 			<p class="article-content">
+				<strong>Linhagem:</strong> {{ subject.lineage}}<br>
 				<strong>Ova ou Controle:</strong> {{ subject.ova_or_control }}<br>
 				<strong>Estado:</strong> {{ subject.dead_or_alive }}<br>
 				<strong>Acepromazina:</strong> {{ subject.acepromazine }}<br>
 				<strong>Peso:</strong> {{ subject.weight }}<br>
 				<strong>Comprimento Naso-Anal:</strong> {{ subject.naso_anal_length }}<br>
 			</p>
+
+			<!-- Botões para Editar e Apagar -->
+			{% if subject.owner == current_user %}
+			
+			<div>
+				<a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('table.update_data', subject_id=subject.id) }}"> Editar </a>
+				<button type="button" class="btn btn-danger btn-sm m-1" data-bs-toggle="modal" data-bs-target="#deleteModal{{ subject.id }}"> Apagar </button>
+			</div>
 		</div>
+			{% endif %}
 	</article>
+
+	<!-- Modal de Exclusão -->
+	<div class="modal fade" id="deleteModal{{ subject.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel{{ subject.id }}" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="deleteModalLabel{{ subject.id }}"> Deseja realmente apagar "{{ subject.id }}"? </h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> Fechar </button>
+					<form action="{{ url_for('table.delete_data', subject_id=subject.id) }}" method="POST">
+						<input class="btn btn-danger" type="submit" value="Apagar">
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 
 {% endfor %}
 
@@ -31,9 +57,9 @@
 	{% if page_num %}
 		
 		{% if subjects.page == page_num %}	
-			<a class="btn btn-info mb-4" href="{{ url_for('users.user_subjects', username=user.username, page=page_num) }}"> {{ page_num }} </a>
+			<a class="btn btn-info mb-4" href="{{ url_for('table.user_subjects', username=user.username, page=page_num) }}"> {{ page_num }} </a>
 		{% else %}
-			<a class="btn btn-outline-info mb-4" href="{{ url_for('users.user_subjects', username=user.username, page=page_num) }}"> {{ page_num }} </a>
+			<a class="btn btn-outline-info mb-4" href="{{ url_for('table.user_subjects', username=user.username, page=page_num) }}"> {{ page_num }} </a>
 		{% endif %}
 		
 	{% else %}
