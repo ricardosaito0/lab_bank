@@ -32,21 +32,21 @@ def display_table():
     
     subjects_data = [
         {
-            'id': subject.id,
-            'lineage': subject.lineage,
-            'ova_or_control': subject.ova_or_control,
-            'dead_or_alive': subject.dead_or_alive,
-            'acepromazine': subject.acepromazine,
-            'weight': subject.weight,
-            'naso_anal_length': subject.naso_anal_length,
-            'user_id': subject.user_id
+            'ID do Exp.': subject.id,
+            'Linhagem': subject.lineage,
+            'OVA/Controle': subject.ova_or_control,
+            'Vivo/Morto': subject.dead_or_alive,
+            'Acepromazina?': subject.acepromazine,
+            'Peso': subject.weight,
+            'CNA': subject.naso_anal_length,
+            'ID do Usuário': subject.user_id
         }
         for subject in subjects
     ]
     
-    subject_table = pd.DataFrame(subjects_data).to_html()
+    subject_table = pd.DataFrame(subjects_data).to_html(classes='table table-bordered', index=False)
     
-    return render_template('display_table.html', title = 'Visualizar tabela', subject_table = subject_table)
+    return render_template('display_table.html', title = 'Visualizar tabela', legend = 'Visualizar tabela', subject_table = subject_table)
     
 @table.route('/table/<int:subject_id>/update/', methods=['GET', 'POST'])
 @login_required

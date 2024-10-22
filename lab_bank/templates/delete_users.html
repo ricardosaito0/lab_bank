@@ -1,0 +1,32 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<h1>Selecione um Usuário</h1>
+
+<form action="{{ url_for('users.delete_users') }}" method="POST" id="userDeleteForm">
+    <select name="username" id="usernameSelect" required>
+        <option value="" disabled selected>Escolha um usuário</option>
+        {% for user in users %}
+            <option value="{{ user.username }}">{{ user.username }}</option>
+        {% endfor %}
+    </select>
+    <button type="submit" id="deleteButton" disabled>Delete User</button>
+</form>
+
+<script>
+    document.getElementById('usernameSelect').addEventListener('change', function() {
+        var selectedUsername = this.value;
+        if (selectedUsername) {
+            document.getElementById('deleteButton').disabled = false;
+        }
+    });
+
+    document.getElementById('userDeleteForm').addEventListener('submit', function(event) {
+        var selectedUsername = document.getElementById('usernameSelect').value;
+        if (!confirm('Are you sure you want to delete user ' + selectedUsername + '?')) {
+            event.preventDefault(); // Stop the form submission if the user cancels
+        }
+    });
+</script>
+
+{% endblock %}

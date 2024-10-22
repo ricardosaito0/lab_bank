@@ -16,8 +16,8 @@ def home():
 @main.route('/about')
 def about():
     
-    test_table = [[78, 21, 41], [12, 34, 12], [12334, 5646, 213213], [4213, 12312, 234]]
-    df = pd.DataFrame(test_table, columns = ['a', 'b', 'c'])
+    test_table = [['', 'あ', 'い ', 'う', 'え', 'お'], ['k', 'か', 'き', 'く', 'け', 'こ'], ['s', 'さ', 'し', 'す', 'せ', 'そ'], ['t', 'た', 'ち', 'つ', 'て', 'と'], ['n', 'な', 'に', 'ぬ', 'ね', 'の'], ['h', 'は', 'ひ', 'ふ', 'へ', 'ほ'], ['m', 'ま', 'み', 'む', 'め', 'も'], ['y', 'や', '', 'ゆ', '', 'よ'], ['r', 'ら', 'り', 'る', 'れ', 'ろ'], ['w', 'わ', '', '', '', 'を'], ['n', 'ん', '', '', '', '']]
+    df = pd.DataFrame(test_table, columns = ['', 'a', 'i', 'u', 'e', 'o'])
     test_table_html = df.to_html(classes='table table-striped', index=False)
 
-    return render_template('about.html', title='About', test_table = test_table_html)
+    return render_template('about.html', title='About', legend = 'Sobre a página', test_table = test_table_html)

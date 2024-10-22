@@ -1,6 +1,21 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-	<div> {{ subject_table | safe }} </div>
+    <div class="table-responsive">
+        {{ subject_table | safe }}
+    </div>
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+
+    <!-- jQuery and DataTables JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+
+    <script>
+        $(document).ready( function () {
+            $('table').DataTable();
+        });
+    </script>
 
 {% endblock %}

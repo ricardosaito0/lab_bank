@@ -1,182 +1,146 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-	<div class = 'content-section'>
-	
-		<form method = 'POST' action = ''>
-		
-			{{ form.hidden_tag() }}
-		
-			<fieldset class = 'form-group'>
+    <div class='content-section'>
+    
+        <form method='POST' action=''>
+        
+            {{ form.hidden_tag() }}
+        
+            <fieldset class='form-group'>
+            
+                <legend class='border-bottom mb-4'>{{ legend }}</legend>
+                
+                <div class='form-group'>
+                    {{ form.lineage.label(class='form-control-label') }}
+                    {% if form.lineage.errors %}
+                        {{ form.lineage(class='form-control form-control-lg is-invalid', onchange="toggleOtherInput('lineage')") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.lineage.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.lineage(class='form-control form-control-lg', onchange="toggleOtherInput('lineage')") }}
+                    {% endif %}
+                    
+                    <div id="other-lineage-container" style="display: none;">
+                        {{ form.other_lineage(class='form-control form-control-lg') }}
+                    </div>
+                </div>
+
+                <div class='form-group'>
+                    {{ form.ova_or_control.label(class='form-control-label') }}
+                    {% if form.ova_or_control.errors %}
+                        {{ form.ova_or_control(class='form-control form-control-lg is-invalid', onchange="toggleOtherInput('ova_or_control')") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.ova_or_control.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.ova_or_control(class='form-control form-control-lg', onchange="toggleOtherInput('ova_or_control')") }}
+                    {% endif %}
+                    
+                    <div id="other-ova-container" style="display: none;">
+                        {{ form.other_ova_or_control(class='form-control form-control-lg') }}
+                    </div>
+                </div>
+
+                <div class='form-group'>
+                    {{ form.dead_or_alive.label(class='form-control-label') }}
+                    {% if form.dead_or_alive.errors %}
+                        {{ form.dead_or_alive(class='form-control form-control-lg is-invalid') }}
+                        <div class="invalid-feedback">
+                            {% for error in form.dead_or_alive.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.dead_or_alive(class='form-control form-control-lg') }}
+                    {% endif %}
+                </div>
+
+                <div class='form-group'>
+                    {{ form.acepromazine.label(class='form-control-label') }}
+                    {% if form.acepromazine.errors %}
+                        {{ form.acepromazine(class='form-control form-control-lg is-invalid', onchange="toggleOtherInput('acepromazine')") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.acepromazine.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.acepromazine(class='form-control form-control-lg', onchange="toggleOtherInput('acepromazine')") }}
+                    {% endif %}
+                    
+                    <div id="other-acepromazine-container" style="display: none;">
+                        {{ form.other_acepromazine(class='form-control form-control-lg') }}
+                    </div>
+                </div>
+
+                <div class='form-group'>
+                    {{ form.weight.label(class='form-control-label') }}
+                    {% if form.weight.errors %}
+                        {{ form.weight(class='form-control form-control-lg is-invalid') }}
+                        <div class="invalid-feedback">
+                            {% for error in form.weight.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.weight(class='form-control form-control-lg') }}
+                    {% endif %}
+                </div>			
 			
-				<legend class = 'border-bottom mb-4'> {{ legend }} </legend>
-				
-				<div class 'form-group'>
-				
-					{{ form.lineage.label(class = 'form-control-label') }}
+                <div class='form-group'>
+                    {{ form.naso_anal_length.label(class='form-control-label') }}
+                    {% if form.naso_anal_length.errors %}
+                        {{ form.naso_anal_length(class='form-control form-control-lg is-invalid') }}
+                        <div class="invalid-feedback">
+                            {% for error in form.naso_anal_length.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.naso_anal_length(class='form-control form-control-lg') }}
+                    {% endif %}
+                </div>				
+            
+            </fieldset>
+            
+            <div class='form-group'>
+                {{ form.submit(class='btn btn-outline-info') }}
+            </div>
+        
+        </form>
+        
+    </div>
 
-					{% if form.lineage.errors %}
+    <script>
+        function toggleOtherInput(fieldName) {
+            const selectField = document.querySelector(`select[name="${fieldName}"]`);
+            let otherInputContainerId = '';
 
-					{{ form.lineage(class = 'form-control form-control-lg is-invalid') }}
+            switch (fieldName) {
+                case 'lineage':
+                    otherInputContainerId = 'other-lineage-container';
+                    break;
+                case 'ova_or_control':
+                    otherInputContainerId = 'other-ova-container';
+                    break;
+                case 'acepromazine':
+                    otherInputContainerId = 'other-acepromazine-container';
+                    break;
+            }
 
-					<div class = "invalid-feedback">
-
-						{% for error in form.lineage.errors %}
-
-							<span> {{ error }} </span>
-							
-						{% endfor %}
-
-					</div>
-
-					{% else %}
-
-						{{ form.lineage(class = 'form-control form-control-lg') }}
-
-					{% endif %}
-				
-				</div>
-		
-				<div class 'form-group'>
-				
-					{{ form.ova_or_control.label(class = 'form-control-label') }}
-
-					{% if form.ova_or_control.errors %}
-
-					{{ form.ova_or_control(class = 'form-control form-control-lg is-invalid') }}
-
-					<div class = "invalid-feedback">
-
-						{% for error in form.ova_or_control.errors %}
-
-							<span> {{ error }} </span>
-							
-						{% endfor %}
-
-					</div>
-
-					{% else %}
-
-						{{ form.ova_or_control(class = 'form-control form-control-lg') }}
-
-					{% endif %}
-					
-				</div>
-		
-				<div class 'form-group'>
-				
-					{{ form.dead_or_alive.label(class = 'form-control-label') }}
-
-					{% if form.dead_or_alive.errors %}
-
-					{{ form.dead_or_alive(class = 'form-control form-control-lg is-invalid') }}
-
-					<div class = "invalid-feedback">
-
-						{% for error in form.dead_or_alive.errors %}
-
-							<span> {{ error }} </span>
-							
-						{% endfor %}
-
-					</div>
-
-					{% else %}
-
-						{{ form.dead_or_alive(class = 'form-control form-control-lg') }}
-
-					{% endif %}
-					
-				</div>
-				
-				<div class 'form-group'>
-				
-					{{ form.acepromazine.label(class = 'form-control-label') }}
-					
-					{% if form.acepromazine.errors %}
-
-					{{ form.acepromazine(class = 'form-control form-control-lg is-invalid') }}
-
-					<div class = "invalid-feedback">
-
-						{% for error in form.acepromazine.errors %}
-
-							<span> {{ error }} </span>
-							
-						{% endfor %}
-
-					</div>
-
-					{% else %}
-
-						{{ form.acepromazine(class = 'form-control form-control-lg') }}
-
-					{% endif %}
-					
-				</div>
-			
-				<div class 'form-group'>
-				
-					{{ form.weight.label(class = 'form-control-label') }}
-					
-					{% if form.weight.errors %}
-
-					{{ form.weight(class = 'form-control form-control-lg is-invalid') }}
-
-					<div class = "invalid-feedback">
-
-						{% for error in form.weight.errors %}
-
-							<span> {{ error }} </span>
-							
-						{% endfor %}
-
-					</div>
-
-					{% else %}
-
-						{{ form.weight(class = 'form-control form-control-lg') }}
-
-					{% endif %}
-					
-				</div>			
-			
-				<div class 'form-group'>
-				
-					{{ form.naso_anal_length.label(class = 'form-control-label') }}
-					
-					{% if form.naso_anal_length.errors %}
-
-					{{ form.naso_anal_length(class = 'form-control form-control-lg is-invalid') }}
-
-					<div class = "invalid-feedback">
-
-						{% for error in form.naso_anal_length.errors %}
-
-							<span> {{ error }} </span>
-							
-						{% endfor %}
-
-					</div>
-
-					{% else %}
-
-						{{ form.naso_anal_length(class = 'form-control form-control-lg') }}
-
-					{% endif %}
-					
-				</div>				
-			
-			</fieldset>
-			
-			<div class = 'form-group'>
-			
-				{{ form.submit(class = 'btn btn-outline-info') }}
-				
-			</div>
-		
-		</form>
-		
-	</div>
+            const otherInputContainer = document.getElementById(otherInputContainerId);
+            if (selectField.value === 'Outros') {
+                otherInputContainer.style.display = 'block';
+            } else {
+                otherInputContainer.style.display = 'none';
+            }
+        }
+    </script>
 
 {% endblock %}

@@ -149,7 +149,30 @@ def reset_password(token):
     
     return render_template('reset_password.html', title = 'Alterar a senha', form = form)
     
-@users.route("/users")
+@users.route('/users')
 def user_list():
-    users = User.query.all()  # Fetch all users from the database
+    users = User.query.all()
     return render_template('user_list.html', users=users)
+    
+@users.route('/delete_users', methods=["GET", "POST"])
+def delete_users():
+    
+    if current_user.id != 1:
+        
+        flash(f'Essa conta não possui permissões para realizar essa operação', 'danger')
+        
+        return redirect(url_for('main.home'))
+    
+    if request.method == "POST":
+        username = request.form.get("username")
+        user = User.query.filter_by(username=username).first()
+        if user:
+            db.session.delete(user)
+            db.session.commit()
+            flash(f"O usuário '{username}' foi deletado com sucesso", "success")
+        else:
+            flash(f"O usuário '{username}' não foi encontrado!", "error")
+        return redirect(url_for('users.delete_users'))
+    
+    users = User.query.all()
+    return render_template('delete_users.html', users=users)

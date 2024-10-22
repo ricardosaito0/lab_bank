@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-<h1 class="mb-3"> Dados de {{ user.username }} ({{ subjects.total }})</h1>
+<h1 class="mb-3"> Dados de {{ user.username }} (nº Experimentos: {{ subjects.total }}; ID: {{ user.id }})</h1>
 	
 {% for subject in subjects.items %}
 	
@@ -21,7 +21,6 @@
 				<strong>Comprimento Naso-Anal:</strong> {{ subject.naso_anal_length }}<br>
 			</p>
 
-			<!-- Botões para Editar e Apagar -->
 			{% if subject.owner == current_user %}
 			
 			<div>
