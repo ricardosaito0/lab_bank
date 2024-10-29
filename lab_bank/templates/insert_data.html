@@ -10,7 +10,23 @@
             <fieldset class='form-group'>
             
                 <legend class='border-bottom mb-4'>{{ legend }}</legend>
-                
+
+                <!-- Campo de Data -->
+                <div class='form-group'>
+                    {{ form.date.label(class='form-control-label') }}
+                    {% if form.date.errors %}
+                        {{ form.date(class='form-control form-control-lg is-invalid') }}
+                        <div class="invalid-feedback">
+                            {% for error in form.date.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.date(class='form-control form-control-lg') }}
+                    {% endif %}
+                </div>
+
+                <!-- Campo de Linhagem -->
                 <div class='form-group'>
                     {{ form.lineage.label(class='form-control-label') }}
                     {% if form.lineage.errors %}
@@ -29,6 +45,7 @@
                     </div>
                 </div>
 
+                <!-- Campo OVA ou Controle -->
                 <div class='form-group'>
                     {{ form.ova_or_control.label(class='form-control-label') }}
                     {% if form.ova_or_control.errors %}
@@ -47,6 +64,7 @@
                     </div>
                 </div>
 
+                <!-- Campo Vivo ou Morto -->
                 <div class='form-group'>
                     {{ form.dead_or_alive.label(class='form-control-label') }}
                     {% if form.dead_or_alive.errors %}
@@ -61,6 +79,7 @@
                     {% endif %}
                 </div>
 
+                <!-- Campo Acepromazina -->
                 <div class='form-group'>
                     {{ form.acepromazine.label(class='form-control-label') }}
                     {% if form.acepromazine.errors %}
@@ -79,6 +98,7 @@
                     </div>
                 </div>
 
+                <!-- Campo Peso -->
                 <div class='form-group'>
                     {{ form.weight.label(class='form-control-label') }}
                     {% if form.weight.errors %}
@@ -91,8 +111,9 @@
                     {% else %}
                         {{ form.weight(class='form-control form-control-lg') }}
                     {% endif %}
-                </div>			
-			
+                </div>            
+            
+                <!-- Campo Comprimento naso-anal -->
                 <div class='form-group'>
                     {{ form.naso_anal_length.label(class='form-control-label') }}
                     {% if form.naso_anal_length.errors %}
@@ -105,7 +126,13 @@
                     {% else %}
                         {{ form.naso_anal_length(class='form-control form-control-lg') }}
                     {% endif %}
-                </div>				
+                </div>
+
+				<div class='form-group'>
+					<label for="excel_file" class='form-control-label'>Upload Excel File</label>
+					<input type="file" name="excel_file" class="form-control" accept=".xls,.xlsx">
+				</div>
+
             
             </fieldset>
             

@@ -59,8 +59,8 @@ class Post(db.Model):
         
 
 class Subject(db.Model):
-    
-    id = db.Column(db.Integer, primary_key=True)    
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.Date, nullable=False)
     lineage = db.Column(db.Text)
     ova_or_control = db.Column(db.Text)
     dead_or_alive = db.Column(db.Text)
@@ -69,3 +69,5 @@ class Subject(db.Model):
     naso_anal_length = db.Column(db.Float)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     date_created = db.Column(db.DateTime, nullable=False, default=datetime.now(pytz.timezone('America/Sao_Paulo')))
+    excel_file_path = db.Column(db.String(200))
+

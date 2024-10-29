@@ -4,49 +4,72 @@ from lab_bank import db
 from lab_bank.table.forms import InsertDataForm
 from lab_bank.models import Subject, User
 import pandas as pd
+import os
+from werkzeug.utils import secure_filename
 
 table = Blueprint('table', __name__)
 
 @table.route('/table/insert_data', methods=['GET', 'POST'])
 @login_required
 def insert_data():
-    
     form = InsertDataForm()
     
     if form.validate_on_submit():
-
-        subject = Subject(lineage = form.lineage.data, ova_or_control = form.ova_or_control.data, dead_or_alive = form.dead_or_alive.data, acepromazine = form.acepromazine.data, weight = form.weight.data, naso_anal_length = form.naso_anal_length.data, user_id = current_user.id)
+        # Save the Excel file
+        file = request.files.get('excel_file')
+        excel_file_path = None
+        
+        if file:
+            filename = secure_filename(file.filename)
+            file_path = os.path.join('uploads', filename)  # Ensure you have an 'uploads' directory
+            file.save(file_path)
+            excel_file_path = filename  # Save just the filename for DB
+        
+        subject = Subject(
+            lineage=form.lineage.data,
+            date=form.date.data,
+            ova_or_control=form.ova_or_control.data,
+            dead_or_alive=form.dead_or_alive.data,
+            acepromazine=form.acepromazine.data,
+            weight=form.weight.data,
+            naso_anal_length=form.naso_anal_length.data,
+            user_id=current_user.id,
+            excel_file_path=excel_file_path  # Save the filename to the database
+        )
 
         db.session.add(subject)
         db.session.commit()
 
-        flash(f'Inserção bem sucedida!', 'success')
+        flash('Inserção bem sucedida!', 'success')
     
-    return render_template('insert_data.html', title = 'Inserir dados', legend = 'Inserir dados', form = form)
+    return render_template('insert_data.html', title='Inserir dados', legend='Inserir dados', form=form)
     
 @table.route('/table/display_table')
 @login_required
 def display_table():
-    
     subjects = Subject.query.all()
     
     subjects_data = [
         {
             'ID do Exp.': subject.id,
+            'Data do Exp.': subject.date.strftime('%d-%m-%Y') if subject.date else 'N/A',
             'Linhagem': subject.lineage,
             'OVA/Controle': subject.ova_or_control,
             'Vivo/Morto': subject.dead_or_alive,
             'Acepromazina?': subject.acepromazine,
             'Peso': subject.weight,
             'CNA': subject.naso_anal_length,
-            'ID do Usuário': subject.user_id
+            'ID do Usuário': subject.user_id,
+            'Arquivo Excel': f'<a href="{url_for("static", filename="uploads/" + subject.excel_file_path)}">Download</a>' if subject.excel_file_path else 'N/A'
         }
         for subject in subjects
     ]
     
-    subject_table = pd.DataFrame(subjects_data).to_html(classes='table table-bordered', index=False)
+    subject_table = pd.DataFrame(subjects_data).to_html(classes='table table-bordered', index=False, escape=False)
     
-    return render_template('display_table.html', title = 'Visualizar tabela', legend = 'Visualizar tabela', subject_table = subject_table)
+    return render_template('display_table.html', title='Visualizar tabela', legend='Visualizar tabela', subject_table=subject_table)
+
+
     
 @table.route('/table/<int:subject_id>/update/', methods=['GET', 'POST'])
 @login_required
@@ -63,6 +86,7 @@ def update_data(subject_id):
     if form.validate_on_submit():
         
         subject.lineage = form.lineage.data
+        subject.date = form.date.data
         subject.ova_or_control = form.ova_or_control.data
         subject.dead_or_alive = form.dead_or_alive.data
         subject.acepromazine = form.acepromazine.data
