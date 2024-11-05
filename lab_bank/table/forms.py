@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, FloatField, SubmitField, SelectField, DateField, FileField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, Optional
 
 class InsertDataForm(FlaskForm):
     
@@ -21,6 +21,6 @@ class InsertDataForm(FlaskForm):
     naso_anal_length = FloatField('Comprimento naso anal', default=0)
     
     # New file input field for the Excel file
-    excel_file = FileField('Upload Excel File', validators=[DataRequired()])
+    excel_file = FileField('Upload de planilhas', validators=[Optional()])
     
     submit = SubmitField('Confirmar inserção de dados')
