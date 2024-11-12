@@ -1,0 +1,10 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+    <div class="content-section">
+        <h2>Excel File: {{ filename }}</h2>
+        <div class="table-responsive">
+            {{ table|safe }}
+        </div>
+    </div>
+{% endblock %}

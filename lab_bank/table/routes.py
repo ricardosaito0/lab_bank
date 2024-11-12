@@ -8,6 +8,8 @@ import os
 import openpyxl
 from werkzeug.utils import secure_filename
 import secrets
+from datetime import datetime
+import string
 
 table = Blueprint('table', __name__)
 
@@ -17,16 +19,26 @@ def insert_data():
     form = InsertDataForm()
     
     if form.validate_on_submit():
-        if form.excel_file.data:  # Check if a file has been uploaded
-            random_hex = secrets.token_hex(8)
-            _, f_ext = os.path.splitext(form.excel_file.data)  # Get the file extension from the filename
-            sheet_fn = random_hex + f_ext  # Generate a unique filename
-            sheet_path = os.path.join(current_app.root_path, 'static', 'uploaded_spreadsheets', sheet_fn)
+        
+        file = request.files.get('excel_file')
 
-            # Save the uploaded file directly
-            file = request.files['file']
+        excel_file_path = None
+        if file and file.filename:
+            timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+            original_filename = secure_filename(file.filename)
+            filename = f"{timestamp}_{original_filename}"
+            upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
+            os.makedirs(upload_folder, exist_ok=True)
+            filepath = os.path.join(upload_folder, filename)
+            file.save(filepath)
+            excel_file_path = filepath
 
-            # Create the Subject object
+            flash('Arquivo salvo com sucesso', 'success')
+        else:
+            flash('Nenhum arquivo selecionado.', 'warning')
+
+        try:
+
             subject = Subject(
                 lineage=form.lineage.data,
                 date=form.date.data,
@@ -36,52 +48,48 @@ def insert_data():
                 weight=form.weight.data,
                 naso_anal_length=form.naso_anal_length.data,
                 user_id=current_user.id,
-                excel_file_path=sheet_fn  # Save the filename in the database
+                excel_file_path=excel_file_path  # Store the file path
             )
-
-            # Add the object to the database session and commit
+            
             db.session.add(subject)
             db.session.commit()
-
             flash('Inserção bem sucedida!', 'success')
-            return redirect(url_for('insert_data'))  # Redirect after successful submission
-        else:
-            flash('Erro: Nenhum arquivo foi carregado.', 'danger')
+            return redirect(url_for('table.insert_data'))
+
+        except Exception as e:
+            db.session.rollback()
+            flash('Erro ao inserir dados: ' + str(e), 'danger')
     
     return render_template('insert_data.html', title='Inserir dados', legend='Inserir dados', form=form)
-
     
 @table.route('/table/display_table')
 @login_required
 def display_table():
     subjects = Subject.query.all()
-    
+
     subjects_data = []
     for subject in subjects:
-        excel_link = 'N/A'
+        file_link = None
         if subject.excel_file_path:
-            # Verifica se o arquivo existe no diretório uploads
-            file_path = os.path.join(current_app.root_path, 'static', 'uploads', subject.excel_file_path)
-            if os.path.exists(file_path):
-                excel_link = f'<a href="{url_for("static", filename="uploads/" + subject.excel_file_path)}">Download</a>'
-
-        # Adiciona os dados do sujeito com o link (se houver)
+            # Assuming the file is stored in the 'static/uploads' directory
+            filename = subject.excel_file_path.split('\\')[-1]  # Get the filename/uploads/<filename>
+            file_link = url_for('table.display_excel_file', filename=filename)
+        
         subjects_data.append({
             'ID do Exp.': subject.id,
             'Data do Exp.': subject.date.strftime('%d-%m-%Y') if subject.date else 'N/A',
             'Linhagem': subject.lineage,
-            'OVA/Controle': subject.ova_or_control,
+            'Grupo Experimental': subject.ova_or_control,
             'Vivo/Morto': subject.dead_or_alive,
             'Acepromazina?': subject.acepromazine,
             'Peso': subject.weight,
             'CNA': subject.naso_anal_length,
             'ID do Usuário': subject.user_id,
-            'Arquivo Excel': excel_link
+            'Caminho para a tabela': f'<a href="{file_link}" target="_blank">Ver Arquivo Excel</a>' if file_link else 'Nenhum arquivo'
         })
-    
-    # Gera o HTML da tabela com pandas
+
     subject_table = pd.DataFrame(subjects_data).to_html(classes='table table-bordered', index=False, escape=False)
-    
+
     return render_template('display_table.html', title='Visualizar tabela', legend='Visualizar tabela', subject_table=subject_table)
 
 
@@ -91,14 +99,13 @@ def display_table():
 def update_data(subject_id):
     subject = Subject.query.get_or_404(subject_id)
 
-    # Verifica se o usuário atual é o proprietário dos dados
     if subject.user_id != current_user.id:
         abort(403)
 
     form = InsertDataForm()
 
     if form.validate_on_submit():
-        # Atualiza os campos do objeto 'subject'
+        
         subject.lineage = form.lineage.data
         subject.date = form.date.data
         subject.ova_or_control = form.ova_or_control.data
@@ -107,31 +114,24 @@ def update_data(subject_id):
         subject.weight = form.weight.data
         subject.naso_anal_length = form.naso_anal_length.data
 
-        # Atualiza o arquivo Excel, se um novo arquivo for enviado
-        file = request.files.get('excel_file')
-        if file and file.filename != '':
-            # Remove o arquivo antigo, se houver
-            if subject.excel_file_path:
-                old_file_path = os.path.join(current_app.root_path, 'static', 'uploads', subject.excel_file_path)
-                if os.path.exists(old_file_path):
-                    os.remove(old_file_path)
-            
-            # Salva o novo arquivo
-            filename = secure_filename(file.filename)
-            uploads_dir = os.path.join(current_app.root_path, 'static', 'uploads')
-            os.makedirs(uploads_dir, exist_ok=True)
-            file_path = os.path.join(uploads_dir, filename)
+        file = form.excel_file.data
+        if file:
+            timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+            filename = secure_filename(f"{timestamp}_{file.filename}")
+            upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
+            os.makedirs(upload_folder, exist_ok=True)
+            file_path = os.path.join(upload_folder, filename)
             file.save(file_path)
-
-            # Atualiza o caminho do arquivo no banco de dados
-            subject.excel_file_path = filename
+            subject.excel_file_path = file_path
+        else:
+            subject.excel_file_path = subject.excel_file_path
 
         db.session.commit()
         flash('Edição bem sucedida', 'success')
         return redirect(url_for('table.display_table'))
 
     elif request.method == 'GET':
-        # Preenche o formulário com os dados atuais do objeto 'subject'
+
         form.lineage.data = subject.lineage
         form.date.data = subject.date
         form.ova_or_control.data = subject.ova_or_control
@@ -166,3 +166,31 @@ def user_subjects(username):
     subjects = Subject.query.filter_by(owner = user).order_by(Subject.id.desc()).paginate(page = page, per_page = 7)
     
     return render_template('user_subjects.html', user = user, title = f'Dados de {username}', subjects = subjects)
+    
+@table.route('/uploads/<filename>')
+@login_required
+def display_excel_file(filename):
+    upload_folder = os.path.join(current_app.root_path, 'static', 'uploads')
+    file_path = os.path.join(upload_folder, filename)
+    
+    if not os.path.exists(file_path):
+        flash("File not found", "danger")
+        return redirect(url_for('some_error_page'))
+
+    df = pd.read_excel(file_path)
+    num_columns = len(df.columns)
+    excel_columns = list(string.ascii_uppercase)  # ['A', 'B', 'C', ..., 'Z']
+    
+    # If there are more than 26 columns (i.e., after 'Z'), continue with AA, AB, etc.
+    if num_columns > 26:
+        extra_columns = num_columns - 26
+        excel_columns += [f"{letter1}{letter2}" for letter1 in string.ascii_uppercase for letter2 in string.ascii_uppercase][:extra_columns]
+    
+    # Assign the generated Excel-style column names
+    df.columns = excel_columns[:num_columns]
+    
+    df = df.fillna('')
+    
+    html_table = df.to_html(classes="table table-bordered table-striped", index=False)
+    
+    return render_template('view_excel.html', table=html_table, filename=filename)

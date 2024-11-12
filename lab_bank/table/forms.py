@@ -20,7 +20,6 @@ class InsertDataForm(FlaskForm):
     weight = FloatField('Peso', default=0)
     naso_anal_length = FloatField('Comprimento naso anal', default=0)
     
-    # New file input field for the Excel file
-    excel_file = FileField('Upload de planilhas', validators=[Optional()])
+    excel_file = FileField()
     
     submit = SubmitField('Confirmar inserção de dados')
