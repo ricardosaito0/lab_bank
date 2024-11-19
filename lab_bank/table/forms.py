@@ -14,7 +14,7 @@ class InsertDataForm(FlaskForm):
     
     dead_or_alive = SelectField('Vivo ou morto?', choices=[('Vivo', 'Vivo'), ('Morto', 'Morto')], default='Vivo')
     
-    acepromazine = SelectField('Acepromazina?', choices=[('Sim', 'Sim'), ('Não', 'Não'), ('Outros', 'Outros')], default='Sim')
+    acepromazine = SelectField('Tratamento', choices=[('Acepromazina', 'Acepromazina'), ('Nenhum', 'Nenhum'), ('Outros', 'Outros')], default='Acepromazina')
     other_acepromazine = StringField('Especificar', render_kw={'placeholder': 'Especifique aqui...'})
     
     weight = FloatField('Peso', default=0)

@@ -12,22 +12,35 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
 
-<style>
-    #subjectTable th:nth-child(1), #subjectTable td:nth-child(1) { width: 10%; }
-    #subjectTable th:nth-child(2), #subjectTable td:nth-child(2) { width: 15%; }
-    #subjectTable th:nth-child(3), #subjectTable td:nth-child(3) { width: 20%; }
-    /* Add more column widths as necessary */
-</style>
-
 <script>
     $(document).ready(function () {
-        $('#subjectTable').DataTable({
-            columnDefs: [
-                { width: '10%', targets: 0 },
-                { width: '15%', targets: 1 },
-                { width: '20%', targets: 2 },
-                // Add more as needed
-            ]
+        // Add a second header row with inputs for column-specific search
+        $('.table thead').append('<tr></tr>');
+        $('.table thead tr').eq(1).html(
+            $('.table thead th').map(function () {
+                return '<th><input type="text" class="form-control" placeholder="Search ' + $(this).text() + '"></th>';
+            }).get().join('')
+        );
+
+        // Initialize the DataTable
+        var table = $('.table').DataTable({
+            dom: 'lrtip', // Remove the global search bar
+            initComplete: function () {
+                // Add filtering functionality to each column's input
+                this.api()
+                    .columns()
+                    .every(function (index) {
+                        var column = this;
+                        $('thead tr:eq(1) th:eq(' + index + ') input')
+                            .on('keyup change', function () {
+                                if (column.search() !== this.value) {
+                                    column.search(this.value).draw();
+                                }
+                            });
+                    });
+            },
+            paging: true, // Enable pagination
+            info: true, // Show table info
         });
     });
 </script>

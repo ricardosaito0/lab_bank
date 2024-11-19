@@ -17,11 +17,23 @@ table = Blueprint('table', __name__)
 @login_required
 def insert_data():
     form = InsertDataForm()
-    
-    if form.validate_on_submit():
-        
-        file = request.files.get('excel_file')
 
+    if form.validate_on_submit():
+        # Handle "Outros" fields with custom input
+        lineage = form.lineage.data
+        if lineage == 'Outros' and form.other_lineage.data:
+            lineage = form.other_lineage.data  # Use the text input value if provided
+
+        ova_or_control = form.ova_or_control.data
+        if ova_or_control == 'Outros' and form.other_ova_or_control.data:
+            ova_or_control = form.other_ova_or_control.data  # Use the text input value if provided
+
+        acepromazine = form.acepromazine.data
+        if acepromazine == 'Outros' and form.other_acepromazine.data:
+            acepromazine = form.other_acepromazine.data  # Use the text input value if provided
+
+        # Handle file upload
+        file = request.files.get('excel_file')
         excel_file_path = None
         if file and file.filename:
             timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
@@ -37,20 +49,20 @@ def insert_data():
         else:
             flash('Nenhum arquivo selecionado.', 'warning')
 
+        # Now create the Subject object using the updated values
         try:
-
             subject = Subject(
-                lineage=form.lineage.data,
+                lineage=lineage,
                 date=form.date.data,
-                ova_or_control=form.ova_or_control.data,
+                ova_or_control=ova_or_control,
                 dead_or_alive=form.dead_or_alive.data,
-                acepromazine=form.acepromazine.data,
+                acepromazine=acepromazine,
                 weight=form.weight.data,
                 naso_anal_length=form.naso_anal_length.data,
                 user_id=current_user.id,
                 excel_file_path=excel_file_path  # Store the file path
             )
-            
+
             db.session.add(subject)
             db.session.commit()
             flash('Inserção bem sucedida!', 'success')
@@ -60,7 +72,7 @@ def insert_data():
             db.session.rollback()
             flash('Erro ao inserir dados: ' + str(e), 'danger')
     
-    return render_template('insert_data.html', title='Inserir dados', legend='Inserir dados', form=form)
+    return render_template('insert_data.html', form=form)
     
 @table.route('/table/display_table')
 @login_required
@@ -81,20 +93,30 @@ def display_table():
             'Linhagem': subject.lineage,
             'Grupo Experimental': subject.ova_or_control,
             'Vivo/Morto': subject.dead_or_alive,
-            'Acepromazina?': subject.acepromazine,
+            'Tratamento': subject.acepromazine,
             'Peso': subject.weight,
             'CNA': subject.naso_anal_length,
             'ID do Usuário': subject.user_id,
             'Caminho para a tabela': f'<a href="{file_link}" target="_blank">Ver Arquivo Excel</a>' if file_link else 'Nenhum arquivo'
         })
 
-    subject_table = pd.DataFrame(subjects_data).to_html(classes='table table-bordered', index=False, escape=False)
+    #subject_table = pd.DataFrame(subjects_data).to_html(classes='table table-bordered', index=False, escape=False)
+    subject_table = pd.DataFrame(subjects_data).to_html(
+    classes='table table-bordered', 
+    index=False, 
+    escape=False,
+    table_id="example_table"
+)
+    subject_table = subject_table.replace('</table>', '<tfoot><tr>' +
+    ''.join('<th></th>' for _ in subjects_data[0]) +
+    '</tr></tfoot></table>')
+
 
     return render_template('display_table.html', title='Visualizar tabela', legend='Visualizar tabela', subject_table=subject_table)
 
 
     
-@table.route('/table/<int:subject_id>/update/', methods=['GET', 'POST'])
+@table.route('/table/update_data/<int:subject_id>', methods=['GET', 'POST'])
 @login_required
 def update_data(subject_id):
     subject = Subject.query.get_or_404(subject_id)
@@ -142,6 +164,7 @@ def update_data(subject_id):
 
     return render_template('insert_data.html', title='Editar dados', form=form, legend='Editar dados')
     
+
 @table.route('/table/<int:subject_id>/delete/', methods=['GET', 'POST'])
 @login_required
 def delete_data(subject_id):
@@ -179,14 +202,12 @@ def display_excel_file(filename):
 
     df = pd.read_excel(file_path)
     num_columns = len(df.columns)
-    excel_columns = list(string.ascii_uppercase)  # ['A', 'B', 'C', ..., 'Z']
+    excel_columns = list(string.ascii_uppercase)
     
-    # If there are more than 26 columns (i.e., after 'Z'), continue with AA, AB, etc.
     if num_columns > 26:
         extra_columns = num_columns - 26
         excel_columns += [f"{letter1}{letter2}" for letter1 in string.ascii_uppercase for letter2 in string.ascii_uppercase][:extra_columns]
     
-    # Assign the generated Excel-style column names
     df.columns = excel_columns[:num_columns]
     
     df = df.fillna('')
