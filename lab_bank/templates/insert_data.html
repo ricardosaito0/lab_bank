@@ -1,4 +1,5 @@
 {% extends 'layout.html' %}
+
 {% block content %}
 
     <div class='content-section'>
@@ -11,6 +12,7 @@
             
                 <legend class='border-bottom mb-4'>{{ legend }}</legend>
 
+                <!-- Date Field -->
                 <div class='form-group'>
                     {{ form.date.label(class='form-control-label') }}
                     {% if form.date.errors %}
@@ -25,6 +27,7 @@
                     {% endif %}
                 </div>
 
+                <!-- Lineage Field -->
                 <div class='form-group'>
                     {{ form.lineage.label(class='form-control-label') }}
                     {% if form.lineage.errors %}
@@ -43,6 +46,7 @@
                     </div>
                 </div>
 
+                <!-- Ova or Control Field -->
                 <div class='form-group'>
                     {{ form.ova_or_control.label(class='form-control-label') }}
                     {% if form.ova_or_control.errors %}
@@ -61,20 +65,26 @@
                     </div>
                 </div>
 
+                <!-- Dead or Alive Field -->
                 <div class='form-group'>
                     {{ form.dead_or_alive.label(class='form-control-label') }}
                     {% if form.dead_or_alive.errors %}
-                        {{ form.dead_or_alive(class='form-control form-control-lg is-invalid') }}
+                        {{ form.dead_or_alive(class='form-control form-control-lg is-invalid', onchange="toggleOtherInput('dead_or_alive')") }}
                         <div class="invalid-feedback">
                             {% for error in form.dead_or_alive.errors %}
                                 <span>{{ error }}</span>
                             {% endfor %}
                         </div>
                     {% else %}
-                        {{ form.dead_or_alive(class='form-control form-control-lg') }}
+                        {{ form.dead_or_alive(class='form-control form-control-lg', onchange="toggleOtherInput('dead_or_alive')") }}
                     {% endif %}
+                    
+                    <div id="other-dead-or-alive-container" style="display: none;">
+                        {{ form.other_dead_or_alive(class='form-control form-control-lg') }}
+                    </div>
                 </div>
 
+                <!-- Acepromazine Field -->
                 <div class='form-group'>
                     {{ form.acepromazine.label(class='form-control-label') }}
                     {% if form.acepromazine.errors %}
@@ -93,6 +103,7 @@
                     </div>
                 </div>
 
+                <!-- Weight Field -->
                 <div class='form-group'>
                     {{ form.weight.label(class='form-control-label') }}
                     {% if form.weight.errors %}
@@ -105,8 +116,24 @@
                     {% else %}
                         {{ form.weight(class='form-control form-control-lg') }}
                     {% endif %}
-                </div>            
-            
+                </div>
+				
+                <!-- Project Field -->
+                <div class='form-group'>
+                    {{ form.project.label(class='form-control-label') }}
+                    {% if form.project.errors %}
+                        {{ form.project(class='form-control form-control-lg is-invalid') }}
+                        <div class="invalid-feedback">
+                            {% for error in form.project.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.project(class='form-control form-control-lg') }}
+                    {% endif %}
+                </div>
+				
+                <!-- Naso-anal length Field -->
                 <div class='form-group'>
                     {{ form.naso_anal_length.label(class='form-control-label') }}
                     {% if form.naso_anal_length.errors %}
@@ -120,22 +147,30 @@
                         {{ form.naso_anal_length(class='form-control form-control-lg') }}
                     {% endif %}
                 </div>
-            
-				<div class="form-group">
-					{{ form.excel_file.label(class="form-control-label") }}
-					{% if form.excel_file.errors %}
-						{{ form.excel_file(class="form-control form-control-lg is-invalid") }}
-						<div class="invalid-feedback">
-							{% for error in form.excel_file.errors %}
-								<span>{{ error }}</span>
-							{% endfor %}
-						</div>
-					{% else %}
-						{{ form.excel_file(class="form-control form-control-lg") }}
-					{% endif %}
-				</div>
 
-			
+                <!-- Excel File Field -->
+                <div class="form-group">
+                    <label for="excel_file">Arquivo Excel Atual:</label>
+                    {% if current_file %}
+                        <p>
+                            <a href="{{ url_for('table.display_excel_file', filename=current_file) }}" target="_blank">{{ current_file }}</a>
+                        </p>
+                    {% else %}
+                        <p>Nenhum arquivo anexado</p>
+                    {% endif %}
+                    {{ form.excel_file.label(class="form-control-label") }}
+                    {% if form.excel_file.errors %}
+                        {{ form.excel_file(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.excel_file.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.excel_file(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
             </fieldset>
             
             <div class='form-group'>
@@ -146,30 +181,41 @@
         
     </div>
 
-    <script>
-        function toggleOtherInput(fieldName) {
-            const selectField = document.querySelector(`select[name="${fieldName}"]`);
-            let otherInputContainerId = '';
+<script>
+    function toggleOtherInput(fieldName) {
+        const selectField = document.querySelector(`select[name="${fieldName}"]`);
+        let otherInputContainerId = '';
 
-            switch (fieldName) {
-                case 'lineage':
-                    otherInputContainerId = 'other-lineage-container';
-                    break;
-                case 'ova_or_control':
-                    otherInputContainerId = 'other-ova-container';
-                    break;
-                case 'acepromazine':
-                    otherInputContainerId = 'other-acepromazine-container';
-                    break;
-            }
-
-            const otherInputContainer = document.getElementById(otherInputContainerId);
-            if (selectField.value === 'Outros') {
-                otherInputContainer.style.display = 'block';
-            } else {
-                otherInputContainer.style.display = 'none';
-            }
+        switch (fieldName) {
+            case 'lineage':
+                otherInputContainerId = 'other-lineage-container';
+                break;
+            case 'ova_or_control':
+                otherInputContainerId = 'other-ova-container';
+                break;
+            case 'acepromazine':
+                otherInputContainerId = 'other-acepromazine-container';
+                break;
+            case 'dead_or_alive':
+                otherInputContainerId = 'other-dead-or-alive-container';
+                break;
         }
-    </script>
+
+        const otherInputContainer = document.getElementById(otherInputContainerId);
+        if (selectField.value === 'Outros') {
+            otherInputContainer.style.display = 'block';
+        } else {
+            otherInputContainer.style.display = 'none';
+        }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        toggleOtherInput('lineage');
+        toggleOtherInput('ova_or_control');
+        toggleOtherInput('acepromazine');
+        toggleOtherInput('dead_or_alive');
+    });
+</script>
 
 {% endblock %}

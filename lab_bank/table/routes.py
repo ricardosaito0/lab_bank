@@ -7,7 +7,6 @@ import pandas as pd
 import os
 import openpyxl
 from werkzeug.utils import secure_filename
-import secrets
 from datetime import datetime
 import string
 
@@ -19,20 +18,27 @@ def insert_data():
     form = InsertDataForm()
 
     if form.validate_on_submit():
-        # Handle "Outros" fields with custom input
+        # Handling "Outros" for the lineage field
         lineage = form.lineage.data
         if lineage == 'Outros' and form.other_lineage.data:
-            lineage = form.other_lineage.data  # Use the text input value if provided
+            lineage = form.other_lineage.data
 
+        # Handling "Outros" for the ova_or_control field
         ova_or_control = form.ova_or_control.data
         if ova_or_control == 'Outros' and form.other_ova_or_control.data:
-            ova_or_control = form.other_ova_or_control.data  # Use the text input value if provided
+            ova_or_control = form.other_ova_or_control.data
 
+        # Handling "Outros" for dead_or_alive field
+        dead_or_alive = form.dead_or_alive.data
+        if dead_or_alive == 'Outros' and form.other_dead_or_alive.data:
+            dead_or_alive = form.other_dead_or_alive.data
+
+        # Handling "Outros" for acepromazine field
         acepromazine = form.acepromazine.data
         if acepromazine == 'Outros' and form.other_acepromazine.data:
-            acepromazine = form.other_acepromazine.data  # Use the text input value if provided
+            acepromazine = form.other_acepromazine.data
 
-        # Handle file upload
+        # Handle file upload (same as before)
         file = request.files.get('excel_file')
         excel_file_path = None
         if file and file.filename:
@@ -44,25 +50,24 @@ def insert_data():
             filepath = os.path.join(upload_folder, filename)
             file.save(filepath)
             excel_file_path = filepath
-
             flash('Arquivo salvo com sucesso', 'success')
         else:
             flash('Nenhum arquivo selecionado.', 'warning')
 
-        # Now create the Subject object using the updated values
+        # Insert the subject into the database
         try:
             subject = Subject(
                 lineage=lineage,
                 date=form.date.data,
                 ova_or_control=ova_or_control,
-                dead_or_alive=form.dead_or_alive.data,
+                dead_or_alive=dead_or_alive,
                 acepromazine=acepromazine,
                 weight=form.weight.data,
+                project=form.project.data if form.project.data else '',
                 naso_anal_length=form.naso_anal_length.data,
                 user_id=current_user.id,
-                excel_file_path=excel_file_path  # Store the file path
+                excel_file_path=excel_file_path
             )
-
             db.session.add(subject)
             db.session.commit()
             flash('Inserção bem sucedida!', 'success')
@@ -71,9 +76,10 @@ def insert_data():
         except Exception as e:
             db.session.rollback()
             flash('Erro ao inserir dados: ' + str(e), 'danger')
-    
+
     return render_template('insert_data.html', form=form)
-    
+
+
 @table.route('/table/display_table')
 @login_required
 def display_table():
@@ -83,8 +89,7 @@ def display_table():
     for subject in subjects:
         file_link = None
         if subject.excel_file_path:
-            # Assuming the file is stored in the 'static/uploads' directory
-            filename = subject.excel_file_path.split('\\')[-1]  # Get the filename/uploads/<filename>
+            filename = subject.excel_file_path.split('\\')[-1]
             file_link = url_for('table.display_excel_file', filename=filename)
         
         subjects_data.append({
@@ -95,27 +100,24 @@ def display_table():
             'Vivo/Morto': subject.dead_or_alive,
             'Tratamento': subject.acepromazine,
             'Peso': subject.weight,
+            'Projeto': subject.project,
             'CNA': subject.naso_anal_length,
             'ID do Usuário': subject.user_id,
             'Caminho para a tabela': f'<a href="{file_link}" target="_blank">Ver Arquivo Excel</a>' if file_link else 'Nenhum arquivo'
         })
 
-    #subject_table = pd.DataFrame(subjects_data).to_html(classes='table table-bordered', index=False, escape=False)
     subject_table = pd.DataFrame(subjects_data).to_html(
-    classes='table table-bordered', 
-    index=False, 
-    escape=False,
-    table_id="example_table"
-)
+        classes='table table-bordered', 
+        index=False, 
+        escape=False,
+        table_id="example_table"
+    )
     subject_table = subject_table.replace('</table>', '<tfoot><tr>' +
-    ''.join('<th></th>' for _ in subjects_data[0]) +
-    '</tr></tfoot></table>')
-
+        ''.join('<th></th>' for _ in subjects_data[0]) +
+        '</tr></tfoot></table>')
 
     return render_template('display_table.html', title='Visualizar tabela', legend='Visualizar tabela', subject_table=subject_table)
 
-
-    
 @table.route('/table/update_data/<int:subject_id>', methods=['GET', 'POST'])
 @login_required
 def update_data(subject_id):
@@ -127,15 +129,28 @@ def update_data(subject_id):
     form = InsertDataForm()
 
     if form.validate_on_submit():
-        
         subject.lineage = form.lineage.data
-        subject.date = form.date.data
+        if subject.lineage == 'Outros' and form.other_lineage.data:
+            subject.lineage = form.other_lineage.data
+
         subject.ova_or_control = form.ova_or_control.data
+        if subject.ova_or_control == 'Outros' and form.other_ova_or_control.data:
+            subject.ova_or_control = form.other_ova_or_control.data
+
         subject.dead_or_alive = form.dead_or_alive.data
+        if subject.dead_or_alive == 'Outros' and form.other_dead_or_alive.data:
+            subject.dead_or_alive = form.other_dead_or_alive.data
+
         subject.acepromazine = form.acepromazine.data
+        if subject.acepromazine == 'Outros' and form.other_acepromazine.data:
+            subject.acepromazine = form.other_acepromazine.data
+
+        subject.date = form.date.data
         subject.weight = form.weight.data
+        subject.project = form.project.data if form.project.data else ''
         subject.naso_anal_length = form.naso_anal_length.data
 
+        # Handle file upload
         file = form.excel_file.data
         if file:
             timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
@@ -144,52 +159,65 @@ def update_data(subject_id):
             os.makedirs(upload_folder, exist_ok=True)
             file_path = os.path.join(upload_folder, filename)
             file.save(file_path)
-            subject.excel_file_path = file_path
-        else:
-            subject.excel_file_path = subject.excel_file_path
+            subject.excel_file_path = file_path  # Update the file path in the database
 
         db.session.commit()
         flash('Edição bem sucedida', 'success')
         return redirect(url_for('table.display_table'))
 
     elif request.method == 'GET':
+        form.lineage.data = subject.lineage if subject.lineage in ['Balb', 'Outros'] else 'Outros'
+        form.other_lineage.data = subject.lineage if subject.lineage not in ['Balb', 'Outros'] else ''
 
-        form.lineage.data = subject.lineage
+        form.ova_or_control.data = subject.ova_or_control if subject.ova_or_control in ['OVA', 'Controle', 'Outros'] else 'Outros'
+        form.other_ova_or_control.data = subject.ova_or_control if subject.ova_or_control not in ['OVA', 'Controle', 'Outros'] else ''
+
+        form.dead_or_alive.data = subject.dead_or_alive if subject.dead_or_alive in ['Vivo', 'Morto', 'Outros'] else 'Outros'
+        form.other_dead_or_alive.data = subject.dead_or_alive if subject.dead_or_alive not in ['Vivo', 'Morto', 'Outros'] else ''
+
+        form.acepromazine.data = subject.acepromazine if subject.acepromazine in ['Acepromazina', 'Nenhum', 'Outros'] else 'Outros'
+        form.other_acepromazine.data = subject.acepromazine if subject.acepromazine not in ['Acepromazina', 'Nenhum', 'Outros'] else ''
+
         form.date.data = subject.date
-        form.ova_or_control.data = subject.ova_or_control
-        form.dead_or_alive.data = subject.dead_or_alive
-        form.acepromazine.data = subject.acepromazine
         form.weight.data = subject.weight
+        form.project.data = subject.project
         form.naso_anal_length.data = subject.naso_anal_length
 
-    return render_template('insert_data.html', title='Editar dados', form=form, legend='Editar dados')
-    
+    # Render the form with the current file information displayed separately
+    current_file = None
+    if subject.excel_file_path:
+        current_file = os.path.basename(subject.excel_file_path)  # Get just the filename
+
+    return render_template(
+        'insert_data.html',
+        title='Editar dados',
+        form=form,
+        legend='Editar dados',
+        current_file=current_file
+    )
 
 @table.route('/table/<int:subject_id>/delete/', methods=['GET', 'POST'])
 @login_required
 def delete_data(subject_id):
-    
     subject = Subject.query.get_or_404(subject_id)
     
     if subject.user_id != current_user.id:
-        
         abort(403)
-        
+    
     db.session.delete(subject)
     db.session.commit()
     flash('Atualização apagada', 'success')
     
-    return redirect(url_for('table.user_subjects', username = current_user.username))
-    
+    return redirect(url_for('table.user_subjects', username=current_user.username))
+
 @table.route("/table/<string:username>")  
 def user_subjects(username):
+    page = request.args.get('page', 1, type=int)
+    user = User.query.filter_by(username=username).first_or_404()
+    subjects = Subject.query.filter_by(user_id=user.id).order_by(Subject.id.desc()).paginate(page=page, per_page=7)
+    
+    return render_template('user_subjects.html', user=user, title=f'Dados de {username}', subjects=subjects)
 
-    page = request.args.get('page', 1, type = int)
-    user = User.query.filter_by(username = username).first_or_404()
-    subjects = Subject.query.filter_by(owner = user).order_by(Subject.id.desc()).paginate(page = page, per_page = 7)
-    
-    return render_template('user_subjects.html', user = user, title = f'Dados de {username}', subjects = subjects)
-    
 @table.route('/uploads/<filename>')
 @login_required
 def display_excel_file(filename):
@@ -197,7 +225,7 @@ def display_excel_file(filename):
     file_path = os.path.join(upload_folder, filename)
     
     if not os.path.exists(file_path):
-        flash("File not found", "danger")
+        flash("Arquivo não encontrado", "danger")
         return redirect(url_for('some_error_page'))
 
     df = pd.read_excel(file_path)

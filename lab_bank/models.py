@@ -59,15 +59,15 @@ class Post(db.Model):
         
 
 class Subject(db.Model):
-    
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, nullable=False)
-    lineage = db.Column(db.Text)
-    ova_or_control = db.Column(db.Text)
-    dead_or_alive = db.Column(db.Text)
-    acepromazine = db.Column(db.Text)
-    weight = db.Column(db.Float)
-    naso_anal_length = db.Column(db.Float)
+    lineage = db.Column(db.String(50), nullable=False)
+    ova_or_control = db.Column(db.String(50), nullable=False)
+    dead_or_alive = db.Column(db.String(50), nullable=False)
+    acepromazine = db.Column(db.String(50), nullable=False)
+    weight = db.Column(db.Float, nullable=False)
+    project = db.Column(db.String(255), nullable=True)  # Ensure this line is present
+    naso_anal_length = db.Column(db.Float, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    date_created = db.Column(db.DateTime, nullable=False, default=datetime.now(pytz.timezone('America/Sao_Paulo')))
-    excel_file_path = db.Column(db.String(255))
+    excel_file_path = db.Column(db.String(255), nullable=True)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
