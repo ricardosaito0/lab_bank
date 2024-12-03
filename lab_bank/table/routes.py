@@ -95,13 +95,13 @@ def display_table():
         subjects_data.append({
             'ID do Exp.': subject.id,
             'Data do Exp.': subject.date.strftime('%d-%m-%Y') if subject.date else 'N/A',
-            'Linhagem': subject.lineage,
+            'Espécie/linhagem': subject.lineage,
             'Grupo Experimental': subject.ova_or_control,
-            'Vivo/Morto': subject.dead_or_alive,
-            'Tratamento': subject.acepromazine,
-            'Peso': subject.weight,
-            'Projeto': subject.project,
-            'CNA': subject.naso_anal_length,
+            'Estado ao final do experimento': subject.dead_or_alive,
+            'Pré anestésico': subject.acepromazine,
+            'Peso (g) (zero se não foi feito)': subject.weight,
+            'Projeto/pesquisador': subject.project,
+            'Comprimento naso anal (cm)': subject.naso_anal_length,
             'ID do Usuário': subject.user_id,
             'Caminho para a tabela': f'<a href="{file_link}" target="_blank">Ver Arquivo Excel</a>' if file_link else 'Nenhum arquivo'
         })
@@ -166,17 +166,17 @@ def update_data(subject_id):
         return redirect(url_for('table.display_table'))
 
     elif request.method == 'GET':
-        form.lineage.data = subject.lineage if subject.lineage in ['Balb', 'Outros'] else 'Outros'
-        form.other_lineage.data = subject.lineage if subject.lineage not in ['Balb', 'Outros'] else ''
+        form.lineage.data = subject.lineage if subject.lineage in ['Camundongo/Balb C', 'Camundongo/C57', 'Rato/Wistar', 'Outros'] else 'Outros'
+        form.other_lineage.data = subject.lineage if subject.lineage not in ['Camundongo/Balb C', 'Camundongo/C57', 'Rato/Wistar', 'Outros'] else ''
 
         form.ova_or_control.data = subject.ova_or_control if subject.ova_or_control in ['OVA', 'Controle', 'Outros'] else 'Outros'
         form.other_ova_or_control.data = subject.ova_or_control if subject.ova_or_control not in ['OVA', 'Controle', 'Outros'] else ''
 
-        form.dead_or_alive.data = subject.dead_or_alive if subject.dead_or_alive in ['Vivo', 'Morto', 'Outros'] else 'Outros'
-        form.other_dead_or_alive.data = subject.dead_or_alive if subject.dead_or_alive not in ['Vivo', 'Morto', 'Outros'] else ''
+        form.dead_or_alive.data = subject.dead_or_alive if subject.dead_or_alive in ['Vivo', 'Morto na anestesia (antes do experimento)', 'Morto durante o experimento', 'Outros'] else 'Outros'
+        form.other_dead_or_alive.data = subject.dead_or_alive if subject.dead_or_alive not in ['Vivo', 'Morto na anestesia (antes do experimento)', 'Morto durante o experimento', 'Outros'] else ''
 
-        form.acepromazine.data = subject.acepromazine if subject.acepromazine in ['Acepromazina', 'Nenhum', 'Outros'] else 'Outros'
-        form.other_acepromazine.data = subject.acepromazine if subject.acepromazine not in ['Acepromazina', 'Nenhum', 'Outros'] else ''
+        form.acepromazine.data = subject.acepromazine if subject.acepromazine in ['Acepromazina 2,5 mg/kg', 'Nenhum', 'Outros'] else 'Outros'
+        form.other_acepromazine.data = subject.acepromazine if subject.acepromazine not in ['Acepromazina 2,5 mg/kg', 'Nenhum', 'Outros'] else ''
 
         form.date.data = subject.date
         form.weight.data = subject.weight

@@ -1,0 +1,26 @@
+observações -> estado no final do experimento
+vivo
+morto na anestesia (antes do experimento)
+morto durante o experimento
+
+tratamento -> pré-anestésico 
+acepromazina 2,5mg/kg
+
+novo campo -> anestésico
+cetamina 100mg/kg + xilazina 10mg/kg
+cetamina 100mg/kg + xilazina 10mg/kg + morfina 
+
+linhagem -> espécie / linhagem
+camundongo/balbC
+camundongo/C57
+rato/wistar
+
+bloqueador neuromuscular
+
+brometo de pancuronio 1mg/kg
+brometo de rocuronio
+
+CNA (zero se não feito)
+
+mover projeto/pesquisador para cima primeiro item
+

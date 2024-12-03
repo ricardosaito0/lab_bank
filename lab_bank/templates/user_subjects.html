@@ -13,12 +13,14 @@
 			</div>
 
 			<p class="article-content">
-				<strong>Linhagem:</strong> {{ subject.lineage}}<br>
-				<strong>Ova ou Controle:</strong> {{ subject.ova_or_control }}<br>
-				<strong>Estado:</strong> {{ subject.dead_or_alive }}<br>
-				<strong>Acepromazina:</strong> {{ subject.acepromazine }}<br>
-				<strong>Peso:</strong> {{ subject.weight }}<br>
-				<strong>Comprimento Naso-Anal:</strong> {{ subject.naso_anal_length }}<br>
+				<strong>Projeto/pesquisador:</strong> {{ subject.project}}<br>
+				<strong>Data do experimento:</strong> {{ subject.date}}<br>
+				<strong>Espécie/linhagem:</strong> {{ subject.lineage}}<br>
+				<strong>Grupo experimental:</strong> {{ subject.ova_or_control }}<br>
+				<strong>Estado ao final do experimento:</strong> {{ subject.dead_or_alive }}<br>
+				<strong>Pré anestésico:</strong> {{ subject.acepromazine }}<br>
+				<strong>Peso (g) (zero se não foi feito):</strong> {{ subject.weight }}<br>
+				<strong>Comprimento naso anal (cm):</strong> {{ subject.naso_anal_length }}<br>
 			</p>
 
 			{% if subject.owner == current_user %}

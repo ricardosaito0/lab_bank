@@ -12,6 +12,23 @@
             
                 <legend class='border-bottom mb-4'>{{ legend }}</legend>
 
+
+                <!-- Project Field -->
+                <div class='form-group'>
+                    {{ form.project.label(class='form-control-label') }}
+                    {% if form.project.errors %}
+                        {{ form.project(class='form-control form-control-lg is-invalid') }}
+                        <div class="invalid-feedback">
+                            {% for error in form.project.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.project(class='form-control form-control-lg') }}
+                    {% endif %}
+                </div>
+				
+				
                 <!-- Date Field -->
                 <div class='form-group'>
                     {{ form.date.label(class='form-control-label') }}
@@ -65,25 +82,6 @@
                     </div>
                 </div>
 
-                <!-- Dead or Alive Field -->
-                <div class='form-group'>
-                    {{ form.dead_or_alive.label(class='form-control-label') }}
-                    {% if form.dead_or_alive.errors %}
-                        {{ form.dead_or_alive(class='form-control form-control-lg is-invalid', onchange="toggleOtherInput('dead_or_alive')") }}
-                        <div class="invalid-feedback">
-                            {% for error in form.dead_or_alive.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.dead_or_alive(class='form-control form-control-lg', onchange="toggleOtherInput('dead_or_alive')") }}
-                    {% endif %}
-                    
-                    <div id="other-dead-or-alive-container" style="display: none;">
-                        {{ form.other_dead_or_alive(class='form-control form-control-lg') }}
-                    </div>
-                </div>
-
                 <!-- Acepromazine Field -->
                 <div class='form-group'>
                     {{ form.acepromazine.label(class='form-control-label') }}
@@ -103,6 +101,25 @@
                     </div>
                 </div>
 
+                <!-- Dead or Alive Field -->
+                <div class='form-group'>
+                    {{ form.dead_or_alive.label(class='form-control-label') }}
+                    {% if form.dead_or_alive.errors %}
+                        {{ form.dead_or_alive(class='form-control form-control-lg is-invalid', onchange="toggleOtherInput('dead_or_alive')") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.dead_or_alive.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.dead_or_alive(class='form-control form-control-lg', onchange="toggleOtherInput('dead_or_alive')") }}
+                    {% endif %}
+                    
+                    <div id="other-dead-or-alive-container" style="display: none;">
+                        {{ form.other_dead_or_alive(class='form-control form-control-lg') }}
+                    </div>
+                </div>
+
                 <!-- Weight Field -->
                 <div class='form-group'>
                     {{ form.weight.label(class='form-control-label') }}
@@ -115,21 +132,6 @@
                         </div>
                     {% else %}
                         {{ form.weight(class='form-control form-control-lg') }}
-                    {% endif %}
-                </div>
-				
-                <!-- Project Field -->
-                <div class='form-group'>
-                    {{ form.project.label(class='form-control-label') }}
-                    {% if form.project.errors %}
-                        {{ form.project(class='form-control form-control-lg is-invalid') }}
-                        <div class="invalid-feedback">
-                            {% for error in form.project.errors %}
-                                <span>{{ error }}</span>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        {{ form.project(class='form-control form-control-lg') }}
                     {% endif %}
                 </div>
 				
