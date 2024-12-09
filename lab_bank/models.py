@@ -17,6 +17,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(200), unique=True, nullable=False)
     profile_picture = db.Column(db.String(20), nullable=False, default='default.jpg')
     password = db.Column(db.String(60))
+    is_admin = db.Column(db.Boolean, default=False)
     posts = db.relationship('Post', backref='author', lazy=True)
     subjects = db.relationship('Subject', backref='owner', lazy=True)
 
@@ -62,6 +63,7 @@ class Subject(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, nullable=False)
     lineage = db.Column(db.String(50), nullable=False)
+    sex = db.Column(db.String(50), nullable=False)
     ova_or_control = db.Column(db.String(50), nullable=False)
     dead_or_alive = db.Column(db.String(50), nullable=False)
     acepromazine = db.Column(db.String(50), nullable=False)

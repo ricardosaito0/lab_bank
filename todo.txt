@@ -1,0 +1,11 @@
+campo para flexivent
+-unicompartimental
+-fase cte
+-não informado
+
+campo observacoes
+
+estatistica
+-prevalencia
+-incidencia
+-mortalidade

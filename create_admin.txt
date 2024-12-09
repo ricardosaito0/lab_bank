@@ -1,0 +1,7 @@
+from flask_bcrypt import Bcrypt
+bcrypt = Bcrypt()
+
+hashed_password = bcrypt.generate_password_hash("password").decode('utf-8')
+new_user = User(username="admin", email="admin@example.com", password=hashed_password, is_admin=True)
+db.session.add(new_user)
+db.session.commit()

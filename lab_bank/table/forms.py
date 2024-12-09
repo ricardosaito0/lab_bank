@@ -2,6 +2,16 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, FloatField, SubmitField, SelectField, DateField, FileField
 from wtforms.validators import DataRequired, Optional
 
+class CustomFloatField(FloatField):
+    def process_formdata(self, valuelist):
+        if valuelist:
+            try:
+                # Substitui vírgulas por pontos para conversão de float
+                self.data = float(valuelist[0].replace(',', '.'))
+            except ValueError:
+                self.data = None
+                raise ValidationError('Valor inválido. Use números e um separador decimal válido (., ,).')
+
 class InsertDataForm(FlaskForm):
     
     project = StringField('Projeto/pesquisador', default = '', validators=[Optional()])
@@ -9,7 +19,10 @@ class InsertDataForm(FlaskForm):
     date = DateField('Data', format='%Y-%m-%d', validators=[DataRequired()])
     
     lineage = SelectField('Espécie/linhagem', choices=[('Camundongo/Balb C', 'Camundongo/Balb C'), ('Camundongo/C57', 'Camundongo/C57'), ('Rato/Wistar', 'Rato/Wistar'), ('Outros', 'Outros')], default='Balb')
-    other_lineage = StringField('Especificar linhagem', render_kw={'placeholder': 'Especifique aqui...'}, validators=[Optional()])
+    other_lineage = StringField('Especificar', render_kw={'placeholder': 'Especifique aqui...'}, validators=[Optional()])
+    
+    sex = SelectField('Sexo', choices=[('Fêmea', 'Fêmea'), ('Macho', 'Macho'), ('Desconhecido', 'Desconhecido'), ('Outros', 'Outros')], default='Fêmea')
+    other_sex = StringField('Especificar', render_kw={'placeholder': 'Especifique aqui...'}, validators=[Optional()])
     
     ova_or_control = SelectField('Grupo experimental', choices=[('OVA', 'OVA'), ('Controle', 'Controle'), ('Outros', 'Outros')], default='OVA')
     other_ova_or_control = StringField('Especificar', render_kw={'placeholder': 'Especifique aqui...'}, validators=[Optional()])
@@ -26,8 +39,8 @@ class InsertDataForm(FlaskForm):
     dead_or_alive = SelectField('Estado ao final do experimento', choices=[('Vivo', 'Vivo'), ('Morto na anestesia (antes do experimento)', 'Morto na anestesia (antes do experimento)'), ('Morto durante o experimento', 'Morto durante o experimento'), ('Outros', 'Outros')], default='Vivo')
     other_dead_or_alive = StringField('Especificar', render_kw={'placeholder': 'Especifique aqui...'}, validators=[Optional()])
     
-    weight = FloatField('Peso (g) (zero se não foi feito)', default=0)
-    naso_anal_length = FloatField('Comprimento naso anal (cm)', default=0)
+    weight = CustomFloatField('Peso (g) (zero se não foi feito)', default=0)
+    naso_anal_length = CustomFloatField('Comprimento naso anal (cm)', default=0)
     
     excel_file = FileField()
     

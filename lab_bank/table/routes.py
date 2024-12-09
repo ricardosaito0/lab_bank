@@ -18,22 +18,23 @@ def insert_data():
     form = InsertDataForm()
 
     if form.validate_on_submit():
-        # Handling "Outros" for the lineage field
+        
         lineage = form.lineage.data
         if lineage == 'Outros' and form.other_lineage.data:
             lineage = form.other_lineage.data
 
-        # Handling "Outros" for the ova_or_control field
+        sex = form.sex.data
+        if sex == 'Outros' and form.other_sex.data:
+            sex = form.other_sex.data
+
         ova_or_control = form.ova_or_control.data
         if ova_or_control == 'Outros' and form.other_ova_or_control.data:
             ova_or_control = form.other_ova_or_control.data
 
-        # Handling "Outros" for dead_or_alive field
         dead_or_alive = form.dead_or_alive.data
         if dead_or_alive == 'Outros' and form.other_dead_or_alive.data:
             dead_or_alive = form.other_dead_or_alive.data
 
-        # Handling "Outros" for acepromazine field
         acepromazine = form.acepromazine.data
         if acepromazine == 'Outros' and form.other_acepromazine.data:
             acepromazine = form.other_acepromazine.data
@@ -46,7 +47,6 @@ def insert_data():
         if neuromuscular_blocker == 'Outros' and form.other_neuromuscular_blocker.data:
             neuromuscular_blocker = form.other_neuromuscular_blocker.data
             
-        # Handle file upload (same as before)
         file = request.files.get('excel_file')
         excel_file_path = None
         if file and file.filename:
@@ -62,10 +62,10 @@ def insert_data():
         else:
             flash('Nenhum arquivo selecionado.', 'warning')
 
-        # Insert the subject into the database
         try:
             subject = Subject(
                 lineage=lineage,
+                sex=sex,
                 date=form.date.data,
                 ova_or_control=ova_or_control,
                 dead_or_alive=dead_or_alive,
@@ -87,7 +87,7 @@ def insert_data():
             db.session.rollback()
             flash('Erro ao inserir dados: ' + str(e), 'danger')
 
-    return render_template('insert_data.html', form=form)
+    return render_template('insert_data.html', title = 'Inserção de dados', legend = 'Inserção de dados', form=form)
 
 
 @table.route('/table/display_table')
@@ -107,6 +107,7 @@ def display_table():
             'Data do Exp.': subject.date.strftime('%d-%m-%Y') if subject.date else 'N/A',
             'Projeto/pesquisador': subject.project,
             'Espécie/linhagem': subject.lineage,
+            'Sexo': subject.sex,
             'Grupo Experimental': subject.ova_or_control,
             'Pré anestésico': subject.acepromazine,
             'Anestésico': subject.anesthesic,
@@ -145,6 +146,10 @@ def update_data(subject_id):
         if subject.lineage == 'Outros' and form.other_lineage.data:
             subject.lineage = form.other_lineage.data
 
+        subject.sex = form.sex.data
+        if subject.sex == 'Outros' and form.other_sex.data:
+            subject.sex = form.other_sex.data
+            
         subject.ova_or_control = form.ova_or_control.data
         if subject.ova_or_control == 'Outros' and form.other_ova_or_control.data:
             subject.ova_or_control = form.other_ova_or_control.data
@@ -166,11 +171,11 @@ def update_data(subject_id):
             subject.neuromuscular_blocker = form.other_neuromuscular_blocker.data
 
         subject.date = form.date.data
+        subject.sex = form.sex.data
         subject.weight = form.weight.data
         subject.project = form.project.data if form.project.data else ''
         subject.naso_anal_length = form.naso_anal_length.data
 
-        # Handle file upload
         file = form.excel_file.data
         if file:
             timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
@@ -188,6 +193,9 @@ def update_data(subject_id):
     elif request.method == 'GET':
         form.lineage.data = subject.lineage if subject.lineage in ['Camundongo/Balb C', 'Camundongo/C57', 'Rato/Wistar', 'Outros'] else 'Outros'
         form.other_lineage.data = subject.lineage if subject.lineage not in ['Camundongo/Balb C', 'Camundongo/C57', 'Rato/Wistar', 'Outros'] else ''
+
+        form.sex.data = subject.sex if subject.sex in ['Fêmea', 'Macho', 'Desconhecido', 'Outros'] else 'Outros'
+        form.other_sex.data = subject.sex if subject.sex not in ['Fêmea', 'Macho', 'Desconhecido', 'Outros'] else ''
 
         form.ova_or_control.data = subject.ova_or_control if subject.ova_or_control in ['OVA', 'Controle', 'Outros'] else 'Outros'
         form.other_ova_or_control.data = subject.ova_or_control if subject.ova_or_control not in ['OVA', 'Controle', 'Outros'] else ''
@@ -209,7 +217,6 @@ def update_data(subject_id):
         form.project.data = subject.project
         form.naso_anal_length.data = subject.naso_anal_length
 
-    # Render the form with the current file information displayed separately
     current_file = None
     if subject.excel_file_path:
         current_file = os.path.basename(subject.excel_file_path)  # Get just the filename

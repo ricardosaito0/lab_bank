@@ -16,14 +16,17 @@
 				<strong>Projeto/pesquisador:</strong> {{ subject.project}}<br>
 				<strong>Data do experimento:</strong> {{ subject.date}}<br>
 				<strong>Espécie/linhagem:</strong> {{ subject.lineage}}<br>
+				<strong>Sexo:</strong> {{ subject.sex}}<br>
 				<strong>Grupo experimental:</strong> {{ subject.ova_or_control }}<br>
 				<strong>Estado ao final do experimento:</strong> {{ subject.dead_or_alive }}<br>
 				<strong>Pré anestésico:</strong> {{ subject.acepromazine }}<br>
+				<strong>Anestésico:</strong> {{ subject.anesthesic }}<br>
+				<strong>Bloqueador neuromuscular:</strong> {{ subject.neuromuscular_blocker }}<br>
 				<strong>Peso (g) (zero se não foi feito):</strong> {{ subject.weight }}<br>
 				<strong>Comprimento naso anal (cm):</strong> {{ subject.naso_anal_length }}<br>
 			</p>
 
-			{% if subject.owner == current_user %}
+			{% if subject.owner == current_user or current_user.is_admin %}
 			
 			<div>
 				<a class="btn btn-secondary btn-sm mt-1 mb-1" href="{{ url_for('table.update_data', subject_id=subject.id) }}"> Editar </a>
@@ -33,7 +36,6 @@
 			{% endif %}
 	</article>
 
-	<!-- Modal de Exclusão -->
 	<div class="modal fade" id="deleteModal{{ subject.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel{{ subject.id }}" aria-hidden="true">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
