@@ -100,6 +100,44 @@
                         {{ form.other_acepromazine(class='form-control form-control-lg') }}
                     </div>
                 </div>
+				
+				<!-- Anesthesic Field -->
+				<div class='form-group'>
+					{{ form.anesthesic.label(class='form-control-label') }}
+					{% if form.anesthesic.errors %}
+						{{ form.anesthesic(class='form-control form-control-lg is-invalid', onchange="toggleOtherInput('anesthesic')") }}
+						<div class="invalid-feedback">
+							{% for error in form.anesthesic.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+					{% else %}
+						{{ form.anesthesic(class='form-control form-control-lg', onchange="toggleOtherInput('anesthesic')") }}
+					{% endif %}
+
+					<div id="other-anesthesic-container" style="display: none;">
+						{{ form.other_anesthesic(class='form-control form-control-lg') }}
+					</div>
+				</div>
+
+				<!-- Neuromuscular Blocker Field -->
+				<div class='form-group'>
+					{{ form.neuromuscular_blocker.label(class='form-control-label') }}
+					{% if form.neuromuscular_blocker.errors %}
+						{{ form.neuromuscular_blocker(class='form-control form-control-lg is-invalid', onchange="toggleOtherInput('neuromuscular_blocker')") }}
+						<div class="invalid-feedback">
+							{% for error in form.neuromuscular_blocker.errors %}
+								<span>{{ error }}</span>
+							{% endfor %}
+						</div>
+					{% else %}
+						{{ form.neuromuscular_blocker(class='form-control form-control-lg', onchange="toggleOtherInput('neuromuscular_blocker')") }}
+					{% endif %}
+
+					<div id="other-neuromuscular_blocker-container" style="display: none;">
+						{{ form.other_neuromuscular_blocker(class='form-control form-control-lg') }}
+					</div>
+				</div>
 
                 <!-- Dead or Alive Field -->
                 <div class='form-group'>
@@ -198,6 +236,12 @@
             case 'acepromazine':
                 otherInputContainerId = 'other-acepromazine-container';
                 break;
+            case 'anesthesic':
+                otherInputContainerId = 'other-anesthesic-container';
+                break;
+            case 'neuromuscular_blocker':
+                otherInputContainerId = 'other-neuromuscular_blocker-container';
+                break;
             case 'dead_or_alive':
                 otherInputContainerId = 'other-dead-or-alive-container';
                 break;
@@ -216,6 +260,8 @@
         toggleOtherInput('lineage');
         toggleOtherInput('ova_or_control');
         toggleOtherInput('acepromazine');
+        toggleOtherInput('anesthesic');
+        toggleOtherInput('neuromuscular_blocker');		
         toggleOtherInput('dead_or_alive');
     });
 </script>

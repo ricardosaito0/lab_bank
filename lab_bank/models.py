@@ -65,8 +65,10 @@ class Subject(db.Model):
     ova_or_control = db.Column(db.String(50), nullable=False)
     dead_or_alive = db.Column(db.String(50), nullable=False)
     acepromazine = db.Column(db.String(50), nullable=False)
+    anesthesic = db.Column(db.String(50), nullable=False)
+    neuromuscular_blocker = db.Column(db.String(50), nullable=False)
     weight = db.Column(db.Float, nullable=False)
-    project = db.Column(db.String(255), nullable=True)  # Ensure this line is present
+    project = db.Column(db.String(255), nullable=True)
     naso_anal_length = db.Column(db.Float, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     excel_file_path = db.Column(db.String(255), nullable=True)

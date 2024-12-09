@@ -38,6 +38,14 @@ def insert_data():
         if acepromazine == 'Outros' and form.other_acepromazine.data:
             acepromazine = form.other_acepromazine.data
 
+        anesthesic = form.anesthesic.data
+        if anesthesic == 'Outros' and form.other_anesthesic.data:
+            anesthesic = form.other_anesthesic.data
+
+        neuromuscular_blocker = form.neuromuscular_blocker.data
+        if neuromuscular_blocker == 'Outros' and form.other_neuromuscular_blocker.data:
+            neuromuscular_blocker = form.other_neuromuscular_blocker.data
+            
         # Handle file upload (same as before)
         file = request.files.get('excel_file')
         excel_file_path = None
@@ -62,6 +70,8 @@ def insert_data():
                 ova_or_control=ova_or_control,
                 dead_or_alive=dead_or_alive,
                 acepromazine=acepromazine,
+                anesthesic=anesthesic,
+                neuromuscular_blocker=neuromuscular_blocker,                
                 weight=form.weight.data,
                 project=form.project.data if form.project.data else '',
                 naso_anal_length=form.naso_anal_length.data,
@@ -95,12 +105,14 @@ def display_table():
         subjects_data.append({
             'ID do Exp.': subject.id,
             'Data do Exp.': subject.date.strftime('%d-%m-%Y') if subject.date else 'N/A',
+            'Projeto/pesquisador': subject.project,
             'Espécie/linhagem': subject.lineage,
             'Grupo Experimental': subject.ova_or_control,
-            'Estado ao final do experimento': subject.dead_or_alive,
             'Pré anestésico': subject.acepromazine,
+            'Anestésico': subject.anesthesic,
+            'Bloqueador neuromuscular': subject.neuromuscular_blocker,
+            'Estado ao final do experimento': subject.dead_or_alive,            
             'Peso (g) (zero se não foi feito)': subject.weight,
-            'Projeto/pesquisador': subject.project,
             'Comprimento naso anal (cm)': subject.naso_anal_length,
             'ID do Usuário': subject.user_id,
             'Caminho para a tabela': f'<a href="{file_link}" target="_blank">Ver Arquivo Excel</a>' if file_link else 'Nenhum arquivo'
@@ -145,6 +157,14 @@ def update_data(subject_id):
         if subject.acepromazine == 'Outros' and form.other_acepromazine.data:
             subject.acepromazine = form.other_acepromazine.data
 
+        subject.anesthesic = form.anesthesic.data
+        if subject.anesthesic == 'Outros' and form.other_anesthesic.data:
+            subject.anesthesic = form.other_anesthesic.data
+
+        subject.neuromuscular_blocker = form.neuromuscular_blocker.data
+        if subject.neuromuscular_blocker == 'Outros' and form.other_neuromuscular_blocker.data:
+            subject.neuromuscular_blocker = form.other_neuromuscular_blocker.data
+
         subject.date = form.date.data
         subject.weight = form.weight.data
         subject.project = form.project.data if form.project.data else ''
@@ -177,6 +197,12 @@ def update_data(subject_id):
 
         form.acepromazine.data = subject.acepromazine if subject.acepromazine in ['Acepromazina 2,5 mg/kg', 'Nenhum', 'Outros'] else 'Outros'
         form.other_acepromazine.data = subject.acepromazine if subject.acepromazine not in ['Acepromazina 2,5 mg/kg', 'Nenhum', 'Outros'] else ''
+
+        form.anesthesic.data = subject.anesthesic if subject.anesthesic in ['Cetamina 100 mg/kg + Xilazina 10 mg/kg', 'Cetamina 100 mg/kg + Xilazina 10 mg/kg + Morfina', 'Nenhum', 'Outros'] else 'Outros'
+        form.other_anesthesic.data = subject.anesthesic if subject.anesthesic not in ['Cetamina 100 mg/kg + Xilazina 10 mg/kg', 'Cetamina 100 mg/kg + Xilazina 10 mg/kg + Morfina', 'Nenhum', 'Outros'] else ''
+
+        form.neuromuscular_blocker.data = subject.neuromuscular_blocker if subject.neuromuscular_blocker in ['Brometo de pancurônio 1 mg/kg', 'Brometo de rocurônio', 'Nenhum', 'Outros'] else 'Outros'
+        form.other_neuromuscular_blocker.data = subject.neuromuscular_blocker if subject.neuromuscular_blocker not in ['Brometo de pancurônio 1 mg/kg', 'Brometo de rocurônio', 'Nenhum', 'Outros'] else ''
 
         form.date.data = subject.date
         form.weight.data = subject.weight
