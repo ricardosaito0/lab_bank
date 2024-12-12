@@ -2,8 +2,10 @@ from datetime import datetime
 from lab_bank import db, login_manager
 from flask_login import UserMixin
 import pytz
-from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+# from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
+from itsdangerous import URLSafeTimedSerializer as Serializer
 from flask import current_app
+from sqlalchemy import Text
 
 @login_manager.user_loader
 def load_user(user_id):

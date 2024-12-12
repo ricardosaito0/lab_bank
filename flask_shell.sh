@@ -1,0 +1,1 @@
+flask --app lab_bank shell
