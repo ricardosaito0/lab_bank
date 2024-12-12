@@ -46,7 +46,11 @@ def insert_data():
         neuromuscular_blocker = form.neuromuscular_blocker.data
         if neuromuscular_blocker == 'Outros' and form.other_neuromuscular_blocker.data:
             neuromuscular_blocker = form.other_neuromuscular_blocker.data
-            
+
+        flexivent = form.flexivent.data
+        if flexivent == 'Outros' and form.other_flexivent.data:
+            flexivent = form.other_flexivent.data
+
         file = request.files.get('excel_file')
         excel_file_path = None
         if file and file.filename:
@@ -71,12 +75,16 @@ def insert_data():
                 dead_or_alive=dead_or_alive,
                 acepromazine=acepromazine,
                 anesthesic=anesthesic,
-                neuromuscular_blocker=neuromuscular_blocker,                
+                neuromuscular_blocker=neuromuscular_blocker,
+                age=form.age.data,
                 weight=form.weight.data,
                 project=form.project.data if form.project.data else '',
                 naso_anal_length=form.naso_anal_length.data,
+                bronchoalveolar_lavage=form.bronchoalveolar_lavage.data,
                 user_id=current_user.id,
-                excel_file_path=excel_file_path
+                flexivent=flexivent,
+                excel_file_path=excel_file_path,
+                observations=form.observations.data if form.observations.data else ''
             )
             db.session.add(subject)
             db.session.commit()
@@ -113,10 +121,13 @@ def display_table():
             'Anestésico': subject.anesthesic,
             'Bloqueador neuromuscular': subject.neuromuscular_blocker,
             'Estado ao final do experimento': subject.dead_or_alive,            
-            'Peso (g) (zero se não foi feito)': subject.weight,
+            'Idade (semanas)': subject.age,
+            'Peso (g)': subject.weight,
             'Comprimento naso anal (cm)': subject.naso_anal_length,
+            'Lavado broncoaoveolar (/ 4 x 10⁴)': subject.bronchoalveolar_lavage,
             'ID do Usuário': subject.user_id,
-            'Caminho para a tabela': f'<a href="{file_link}" target="_blank">Ver Arquivo Excel</a>' if file_link else 'Nenhum arquivo'
+            'Caminho para a tabela': f'<a href="{file_link}" target="_blank">Ver Arquivo Excel</a>' if file_link else 'Nenhum arquivo',
+            'Observações': subject.observations
         })
 
     subject_table = pd.DataFrame(subjects_data).to_html(
@@ -170,11 +181,14 @@ def update_data(subject_id):
         if subject.neuromuscular_blocker == 'Outros' and form.other_neuromuscular_blocker.data:
             subject.neuromuscular_blocker = form.other_neuromuscular_blocker.data
 
+        subject.project = form.project.data if form.project.data else ''
         subject.date = form.date.data
         subject.sex = form.sex.data
+        subject.age = form.age.data
         subject.weight = form.weight.data
-        subject.project = form.project.data if form.project.data else ''
         subject.naso_anal_length = form.naso_anal_length.data
+        subject.bronchoalveolar_lavage = form.bronchoalveolar_lavage.data
+        subject.observations = form.observations.data if form.observations.data else ''
 
         file = form.excel_file.data
         if file:
@@ -212,22 +226,22 @@ def update_data(subject_id):
         form.neuromuscular_blocker.data = subject.neuromuscular_blocker if subject.neuromuscular_blocker in ['Brometo de pancurônio 1 mg/kg', 'Brometo de rocurônio', 'Nenhum', 'Outros'] else 'Outros'
         form.other_neuromuscular_blocker.data = subject.neuromuscular_blocker if subject.neuromuscular_blocker not in ['Brometo de pancurônio 1 mg/kg', 'Brometo de rocurônio', 'Nenhum', 'Outros'] else ''
 
+        form.flexivent.data = subject.flexivent if subject.flexivent in ['Unicompartimental', 'Fase Cte', 'Não informado', 'Outros'] else 'Outros'
+        form.other_flexivent.data = subject.flexivent if subject.flexivent not in ['Unicompartimental', 'Fase Cte', 'Não informado', 'Outros'] else ''
+
+        form.project.data = subject.project
         form.date.data = subject.date
         form.weight.data = subject.weight
-        form.project.data = subject.project
+        form.age.data = subject.age
         form.naso_anal_length.data = subject.naso_anal_length
+        form.bronchoalveolar_lavage.data = subject.bronchoalveolar_lavage
+        form.observations.data = subject.observations
 
     current_file = None
     if subject.excel_file_path:
         current_file = os.path.basename(subject.excel_file_path)  # Get just the filename
 
-    return render_template(
-        'insert_data.html',
-        title='Editar dados',
-        form=form,
-        legend='Editar dados',
-        current_file=current_file
-    )
+    return render_template('insert_data.html', title='Editar dados', form=form, legend='Editar dados', current_file=current_file)
 
 @table.route('/table/<int:subject_id>/delete/', methods=['GET', 'POST'])
 @login_required

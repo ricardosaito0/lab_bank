@@ -28,7 +28,6 @@
                     {% endif %}
                 </div>
 				
-				
                 <!-- Date Field -->
                 <div class='form-group'>
                     {{ form.date.label(class='form-control-label') }}
@@ -177,6 +176,21 @@
                     </div>
                 </div>
 
+                <!-- Age Field -->
+                <div class='form-group'>
+                    {{ form.age.label(class='form-control-label') }}
+                    {% if form.age.errors %}
+                        {{ form.age(class='form-control form-control-lg is-invalid') }}
+                        <div class="invalid-feedback">
+                            {% for error in form.age.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.age(class='form-control form-control-lg') }}
+                    {% endif %}
+                </div>
+
                 <!-- Weight Field -->
                 <div class='form-group'>
                     {{ form.weight.label(class='form-control-label') }}
@@ -207,6 +221,40 @@
                     {% endif %}
                 </div>
 
+                <!-- Bronchoalveolar Lavage Field -->
+                <div class='form-group'>
+                    {{ form.bronchoalveolar_lavage.label(class='form-control-label') }}
+                    {% if form.bronchoalveolar_lavage.errors %}
+                        {{ form.bronchoalveolar_lavage(class='form-control form-control-lg is-invalid') }}
+                        <div class="invalid-feedback">
+                            {% for error in form.bronchoalveolar_lavage.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.bronchoalveolar_lavage(class='form-control form-control-lg') }}
+                    {% endif %}
+                </div>
+
+                <!-- Flexivent Field -->
+                <div class='form-group'>
+                    {{ form.flexivent.label(class='form-control-label') }}
+                    {% if form.flexivent.errors %}
+                        {{ form.flexivent(class='form-control form-control-lg is-invalid', onchange="toggleOtherInput('flexivent')") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.flexivent.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.flexivent(class='form-control form-control-lg', onchange="toggleOtherInput('flexivent')") }}
+                    {% endif %}
+                    
+                    <div id="other-flexivent-container" style="display: none;">
+                        {{ form.other_flexivent(class='form-control form-control-lg') }}
+                    </div>
+                </div>
+
                 <!-- Excel File Field -->
                 <div class="form-group">
                     <label for="excel_file">Arquivo Excel Atual:</label>
@@ -227,6 +275,21 @@
                         </div>
                     {% else %}
                         {{ form.excel_file(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+                <!-- Observations Field -->
+                <div class='form-group'>
+                    {{ form.observations.label(class='form-control-label') }}
+                    {% if form.observations.errors %}
+                        {{ form.observations(class='form-control form-control-lg is-invalid', rows=5) }}
+                        <div class="invalid-feedback">
+                            {% for error in form.observations.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.observations(class='form-control form-control-lg', rows=5) }}
                     {% endif %}
                 </div>
 

@@ -39,9 +39,19 @@ class InsertDataForm(FlaskForm):
     dead_or_alive = SelectField('Estado ao final do experimento', choices=[('Vivo', 'Vivo'), ('Morto na anestesia (antes do experimento)', 'Morto na anestesia (antes do experimento)'), ('Morto durante o experimento', 'Morto durante o experimento'), ('Outros', 'Outros')], default='Vivo')
     other_dead_or_alive = StringField('Especificar', render_kw={'placeholder': 'Especifique aqui...'}, validators=[Optional()])
     
-    weight = CustomFloatField('Peso (g) (zero se não foi feito)', default=0)
-    naso_anal_length = CustomFloatField('Comprimento naso anal (cm)', default=0)
+    age = CustomFloatField('Idade (semanas) (zero se não foi medido)', default=0)
+
+    weight = CustomFloatField('Peso (g) (zero se não foi medido)', default=0)
+    
+    naso_anal_length = CustomFloatField('Comprimento naso anal (cm) (zero se não foi medido)', default=0)
+    
+    bronchoalveolar_lavage = CustomFloatField('Lavado broncoaoveolar (/ 4 x 10⁴) (zero se não foi medido)', default=0)
+
+    flexivent = SelectField('FlexiVent', choices=[('Unicompartimental', 'Unicompartimental'), ('Fase Cte', 'Fase Cte'), ('Não informado', 'Não informado'), ('Outros', 'Outros')], default='Não informado')
+    other_flexivent = StringField('Especificar', render_kw={'placeholder': 'Especifique aqui...'}, validators=[Optional()])
     
     excel_file = FileField()
-    
+
+    observations = StringField('Observações', default = '', validators=[Optional()])
+
     submit = SubmitField('Confirmar inserção de dados')
