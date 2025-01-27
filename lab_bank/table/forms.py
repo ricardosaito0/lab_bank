@@ -6,7 +6,6 @@ class CustomFloatField(FloatField):
     def process_formdata(self, valuelist):
         if valuelist:
             try:
-                # Substitui vírgulas por pontos para conversão de float
                 self.data = float(valuelist[0].replace(',', '.'))
             except ValueError:
                 self.data = None
@@ -15,7 +14,9 @@ class CustomFloatField(FloatField):
 class InsertDataForm(FlaskForm):
     
     project = StringField('Projeto/pesquisador', default = '', validators=[Optional()])
-    
+
+    name_number = StringField('Nome/número do animal', default = '', validators=[Optional()])
+
     date = DateField('Data', format='%Y-%m-%d', validators=[DataRequired()])
     
     lineage = SelectField('Espécie/linhagem', choices=[('Camundongo/Balb C', 'Camundongo/Balb C'), ('Camundongo/C57', 'Camundongo/C57'), ('Rato/Wistar', 'Rato/Wistar'), ('Outros', 'Outros')], default='Balb')

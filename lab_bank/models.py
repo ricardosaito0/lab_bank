@@ -74,6 +74,7 @@ class Subject(db.Model):
     age = db.Column(db.Float, nullable=False)
     weight = db.Column(db.Float, nullable=False)
     project = db.Column(db.String(255), nullable=True)
+    name_number = db.Column(db.String(255), nullable=True)
     naso_anal_length = db.Column(db.Float, nullable=True)
     bronchoalveolar_lavage = db.Column(db.Float, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)

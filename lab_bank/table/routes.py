@@ -79,6 +79,7 @@ def insert_data():
                 age=form.age.data,
                 weight=form.weight.data,
                 project=form.project.data if form.project.data else '',
+                name_number=form.name_number.data if form.name_number.data else '',                
                 naso_anal_length=form.naso_anal_length.data,
                 bronchoalveolar_lavage=form.bronchoalveolar_lavage.data,
                 user_id=current_user.id,
@@ -114,6 +115,7 @@ def display_table():
             'ID do Exp.': subject.id,
             'Data do Exp.': subject.date.strftime('%d-%m-%Y') if subject.date else 'N/A',
             'Projeto/pesquisador': subject.project,
+            'Nome/número do animal': subject.name_number,
             'Espécie/linhagem': subject.lineage,
             'Sexo': subject.sex,
             'Grupo Experimental': subject.ova_or_control,
@@ -182,6 +184,7 @@ def update_data(subject_id):
             subject.neuromuscular_blocker = form.other_neuromuscular_blocker.data
 
         subject.project = form.project.data if form.project.data else ''
+        subject.name_number = form.name_number.data if form.name_number.data else ''
         subject.date = form.date.data
         subject.sex = form.sex.data
         subject.age = form.age.data
@@ -230,6 +233,7 @@ def update_data(subject_id):
         form.other_flexivent.data = subject.flexivent if subject.flexivent not in ['Unicompartimental', 'Fase Cte', 'Não informado', 'Outros'] else ''
 
         form.project.data = subject.project
+        form.name_number.data = subject.name_number
         form.date.data = subject.date
         form.weight.data = subject.weight
         form.age.data = subject.age

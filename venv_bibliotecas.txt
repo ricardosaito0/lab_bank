@@ -1,0 +1,14 @@
+# Para bash e zsh
+source venv/bin/activate
+
+#Para fish
+. venv/bin/activate.fish
+
+# Instalar pip
+python -m ensurepip --upgrade
+
+#Atualizar pip
+pip install --upgrade pip
+
+#Instalar dependências
+pip install flask flask_wtf flask_sqlalchemy flask_bcrypt flask_login email_validator mail_validator flask_mail pytz pillow pandas numpy openpyxl

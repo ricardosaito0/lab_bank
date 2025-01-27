@@ -13,17 +13,24 @@
 			</div>
 
 			<p class="article-content">
-				<strong>Projeto/pesquisador:</strong> {{ subject.project}}<br>
-				<strong>Data do experimento:</strong> {{ subject.date}}<br>
-				<strong>Espécie/linhagem:</strong> {{ subject.lineage}}<br>
-				<strong>Sexo:</strong> {{ subject.sex}}<br>
-				<strong>Grupo experimental:</strong> {{ subject.ova_or_control }}<br>
-				<strong>Estado ao final do experimento:</strong> {{ subject.dead_or_alive }}<br>
-				<strong>Pré anestésico:</strong> {{ subject.acepromazine }}<br>
+				<strong>ID do Experimento:</strong> {{ subject.id }}<br>
+				<strong>Data do Experimento:</strong> {{ subject.date.strftime('%d-%m-%Y') if subject.date else 'N/A' }}<br>
+				<strong>Projeto/pesquisador:</strong> {{ subject.project }}<br>
+				<strong>Nome/número do animal:</strong> {{ subject.name_number }}<br>
+				<strong>Espécie/linhagem:</strong> {{ subject.lineage }}<br>
+				<strong>Sexo:</strong> {{ subject.sex }}<br>
+				<strong>Grupo Experimental:</strong> {{ subject.ova_or_control }}<br>
+				<strong>Pré-anestésico:</strong> {{ subject.acepromazine }}<br>
 				<strong>Anestésico:</strong> {{ subject.anesthesic }}<br>
 				<strong>Bloqueador neuromuscular:</strong> {{ subject.neuromuscular_blocker }}<br>
-				<strong>Peso (g) (zero se não foi feito):</strong> {{ subject.weight }}<br>
+				<strong>Estado ao final do experimento:</strong> {{ subject.dead_or_alive }}<br>
+				<strong>Idade (semanas):</strong> {{ subject.age }}<br>
+				<strong>Peso (g):</strong> {{ subject.weight }}<br>
 				<strong>Comprimento naso anal (cm):</strong> {{ subject.naso_anal_length }}<br>
+				<strong>Lavado broncoalveolar (/ 4 x 10⁴):</strong> {{ subject.bronchoalveolar_lavage }}<br>
+				<strong>ID do Usuário:</strong> {{ subject.user_id }}<br>
+				<strong>Observações:</strong> {{ subject.observations }}<br>
+				
 			</p>
 
 			{% if subject.owner == current_user or current_user.is_admin %}

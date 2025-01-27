@@ -28,6 +28,21 @@
                     {% endif %}
                 </div>
 				
+                <!-- Name/number Field -->
+                <div class='form-group'>
+                    {{ form.name_number.label(class='form-control-label') }}
+                    {% if form.name_number.errors %}
+                        {{ form.name_number(class='form-control form-control-lg is-invalid') }}
+                        <div class="invalid-feedback">
+                            {% for error in form.name_number.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.name_number(class='form-control form-control-lg') }}
+                    {% endif %}
+                </div>
+
                 <!-- Date Field -->
                 <div class='form-group'>
                     {{ form.date.label(class='form-control-label') }}
