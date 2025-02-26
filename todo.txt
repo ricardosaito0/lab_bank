@@ -1,11 +1,5 @@
-campo para flexivent
--unicompartimental
--fase cte
--não informado
-
-campo observacoes
-
-estatistica
--prevalencia
--incidencia
--mortalidade
+suporte para hd externo -> colocar a pasta lab_bank no hd externo
+suporte para parameters
+suporte para sinais
+usuário sem acesso à escrita
+google drive
