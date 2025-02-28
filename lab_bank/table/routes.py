@@ -3,6 +3,7 @@ from flask_login import current_user, login_required
 from lab_bank import db
 from lab_bank.table.forms import InsertDataForm
 from lab_bank.models import Subject, User
+from lab_bank.utils import admin_required
 import pandas as pd
 import os
 import openpyxl
@@ -14,6 +15,7 @@ table = Blueprint('table', __name__)
 
 @table.route('/table/insert_data', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def insert_data():
     form = InsertDataForm()
 
@@ -146,6 +148,7 @@ def display_table():
 
 @table.route('/table/update_data/<int:subject_id>', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def update_data(subject_id):
     subject = Subject.query.get_or_404(subject_id)
 
@@ -249,10 +252,11 @@ def update_data(subject_id):
 
 @table.route('/table/<int:subject_id>/delete/', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def delete_data(subject_id):
     subject = Subject.query.get_or_404(subject_id)
     
-    if subject.user_id != current_user.id:
+    if (subject.user_id != current_user.id) and (not current_user.is_admin):
         abort(403)
     
     db.session.delete(subject)
