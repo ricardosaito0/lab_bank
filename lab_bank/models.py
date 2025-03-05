@@ -79,6 +79,8 @@ class Subject(db.Model):
     bronchoalveolar_lavage = db.Column(db.Float, nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     excel_file_path = db.Column(db.String(255), nullable=True)
+    parameters_file_path = db.Column(db.String(255), nullable = True)
+    signals_file_path = db.Column(db.String(255), nullable = True)
     flexivent = db.Column(db.String(50), nullable=False)
     date_created = db.Column(db.DateTime, default=datetime.utcnow)
     observations = db.Column(Text, nullable=True)

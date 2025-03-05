@@ -53,6 +53,10 @@ class InsertDataForm(FlaskForm):
     
     excel_file = FileField()
 
+    parameters_file = FileField()
+
+    signals_file = FileField()
+
     observations = StringField('Observações', default = '', validators=[Optional()])
 
     submit = SubmitField('Confirmar inserção de dados')

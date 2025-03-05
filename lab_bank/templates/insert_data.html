@@ -270,7 +270,7 @@
                     </div>
                 </div>
 
-                <!-- Excel File Field -->
+                <!-- Excel File Field
                 <div class="form-group">
                     <label for="excel_file">Arquivo Excel Atual:</label>
                     {% if current_file %}
@@ -291,20 +291,80 @@
                     {% else %}
                         {{ form.excel_file(class="form-control form-control-lg") }}
                     {% endif %}
-                </div>
+                </div> -->
 
-                <!-- Observations Field -->
-                <div class='form-group'>
-                    {{ form.observations.label(class='form-control-label') }}
-                    {% if form.observations.errors %}
-                        {{ form.observations(class='form-control form-control-lg is-invalid', rows=5) }}
+                <!-- Excel File Upload -->
+                <div class="form-group">
+                    <label for="excel_file">Arquivo Excel:</label>
+                    {% if current_files and current_files.excel_file %}
+                        <p>
+                            <a href="{{ url_for('table.download_excel_file', filename=current_files.excel_file) }}" target="_blank">
+                                Baixar {{ current_files.excel_file }}
+                            </a>
+                        </p>
+                    {% else %}
+                        <p>Nenhum arquivo Excel anexado</p>
+                    {% endif %}
+                    {{ form.excel_file.label(class="form-control-label") }}
+                    {% if form.excel_file.errors %}
+                        {{ form.excel_file(class="form-control form-control-lg is-invalid") }}
                         <div class="invalid-feedback">
-                            {% for error in form.observations.errors %}
+                            {% for error in form.excel_file.errors %}
                                 <span>{{ error }}</span>
                             {% endfor %}
                         </div>
                     {% else %}
-                        {{ form.observations(class='form-control form-control-lg', rows=5) }}
+                        {{ form.excel_file(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+                <!-- Parameters File Upload -->
+                <div class="form-group">
+                    <label for="parameters_file">Arquivo de Parâmetros:</label>
+                    {% if current_files and current_files.parameters_file %}
+                        <p>
+                            <a href="{{ url_for('table.download_parameters_file', filename=current_files.parameters_file) }}" target="_blank">
+                                Baixar {{ current_files.parameters_file }}
+                            </a>
+                        </p>
+                    {% else %}
+                        <p>Nenhum arquivo de parâmetros anexado</p>
+                    {% endif %}
+                    {{ form.parameters_file.label(class="form-control-label") }}
+                    {% if form.parameters_file.errors %}
+                        {{ form.parameters_file(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.parameters_file.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.parameters_file(class="form-control form-control-lg") }}
+                    {% endif %}
+                </div>
+
+                <!-- Signals File Upload -->
+                <div class="form-group">
+                    <label for="signals_file">Arquivo de Sinais:</label>
+                    {% if current_files and current_files.signals_file %}
+                        <p>
+                            <a href="{{ url_for('table.download_signals_file', filename=current_files.signals_file) }}" target="_blank">
+                                Baixar {{ current_files.signals_file }}
+                            </a>
+                        </p>
+                    {% else %}
+                        <p>Nenhum arquivo de sinais anexado</p>
+                    {% endif %}
+                    {{ form.signals_file.label(class="form-control-label") }}
+                    {% if form.signals_file.errors %}
+                        {{ form.signals_file(class="form-control form-control-lg is-invalid") }}
+                        <div class="invalid-feedback">
+                            {% for error in form.signals_file.errors %}
+                                <span>{{ error }}</span>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        {{ form.signals_file(class="form-control form-control-lg") }}
                     {% endif %}
                 </div>
 
